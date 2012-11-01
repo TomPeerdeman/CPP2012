@@ -1,4 +1,5 @@
 Opgave Concurrency & Parallel programmeren
 
-Tom Peerdeman
-René Aparicio Saez
+Tom Peerdeman - 10266186
+
+René Aparicio Saez - 10214054
