@@ -11,6 +11,11 @@
 
 #include "simulate.h"
 
+typedef struct{
+	int i_min;
+	int i_max;
+} i_range_t;
+
 
 /* Add any global variables you may need. */
 double *gl_old_array;
@@ -21,7 +26,9 @@ double *gl_next_array;
 void *compute(void *p){
 	// bereken A voor gegeven i's -> wachten tot alle threads klaar zijn
 	// --> berekenen A voor gegeven i's voor t+1 --> etc
-	printf("Hello world!\n");
+	i_range_t *range = (i_range_t *) p;
+	
+	printf("Hello world! Range: %d-%d\n", range->i_min, range->i_max);
 	return NULL;
 }
 
@@ -49,14 +56,24 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
 	
 	// TODO: vervangen door malloc
 	pthread_t threadIds[num_threads];
+	i_range_t iRanges[num_threads];
 	
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 	pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
 	
 	for(nThread = 0; nThread < num_threads; nThread++){
+		// Set the i range the thread should calculate
+		iRanges[nThread].i_min = iPerThread * nThread;
+		
+		if(nThread + 1 == num_threads){
+			iRanges[nThread].i_max = i_max - 1;
+		}else{
+			iRanges[nThread].i_max = iPerThread * (nThread + 1) - 1;
+		}
+		
 		// TODO: check return waarde
-		pthread_create(&threadIds[nThread], &attr, &compute, NULL);
+		pthread_create(&threadIds[nThread], &attr, &compute, &iRanges[nThread]);
 	}
 	
 	void *result;
