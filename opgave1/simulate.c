@@ -14,7 +14,11 @@
 
 
 /* Add any functions you may need (like a worker) here. */
-
+void *compute(void *p){
+	// bereken A voor gegeven i's -> wachten tot alle threads klaar zijn
+	// --> berekenen A voor gegeven i's voor t+1 --> etc
+	return NULL;
+}
 
 /*
  * Executes the entire simulation.
@@ -30,10 +34,16 @@
  */
 double *simulate(const int i_max, const int t_max, const int num_threads,
 		double *old_array, double *current_array, double *next_array){
-	int t;
-	int iperthread = i_max / num_threads;
-
-	for(t = 0; t < 
+	int nThread;
+	int iPerThread = i_max / num_threads;
+	
+	for(nThread = 0; nThread < num_threads; nThread++){
+		// Maak threads hier die de methode compute aanroepen
+	}
+	
+	for(nThread = 0; nThread < num_threads; nThread++){
+		// Join threads
+	}
 
 	/*
 	* After each timestep, you should swap the buffers around. Watch out none
