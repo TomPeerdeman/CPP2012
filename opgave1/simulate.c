@@ -7,16 +7,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <pthread.h>
+
 #include "simulate.h"
 
 
 /* Add any global variables you may need. */
-
+double *gl_old_array;
+double *gl_current_array;
+double *gl_next_array;
 
 /* Add any functions you may need (like a worker) here. */
 void *compute(void *p){
 	// bereken A voor gegeven i's -> wachten tot alle threads klaar zijn
 	// --> berekenen A voor gegeven i's voor t+1 --> etc
+	printf("Hello world!\n");
 	return NULL;
 }
 
@@ -34,16 +39,32 @@ void *compute(void *p){
  */
 double *simulate(const int i_max, const int t_max, const int num_threads,
 		double *old_array, double *current_array, double *next_array){
+	gl_old_array = old_array;
+	gl_current_array = current_array;
+	gl_next_array = next_array;
+	
 	int nThread;
 	int iPerThread = i_max / num_threads;
+	(void)(iPerThread);
+	
+	// TODO: vervangen door malloc
+	pthread_t threadIds[num_threads];
+	
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
 	
 	for(nThread = 0; nThread < num_threads; nThread++){
-		// Maak threads hier die de methode compute aanroepen
+		// TODO: check return waarde
+		pthread_create(&threadIds[nThread], &attr, &compute, NULL);
 	}
 	
+	void *result;
 	for(nThread = 0; nThread < num_threads; nThread++){
-		// Join threads
+		pthread_join(threadIds[nThread], &result);
 	}
+	
+	pthread_attr_destroy(&attr);
 
 	/*
 	* After each timestep, you should swap the buffers around. Watch out none
