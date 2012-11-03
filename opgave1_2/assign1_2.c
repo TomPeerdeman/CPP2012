@@ -11,7 +11,7 @@ typedef struct{
 int main(int argc, char *argv[]){
   //pthread_t *threads = NULL;
   int upperbound;
-  int counter = 2;
+  int counter = INT_MAX;
   
   /* 
    * You can give an argument telling the program you only want prime numbers
@@ -25,7 +25,9 @@ int main(int argc, char *argv[]){
     upperbound = INT_MAX;
   }
   printf("Upperbound for primes: %d\n",upperbound);
-  
+  while(counter < upperbound){
+    counter++;
+  }
 
   
   return 0;
