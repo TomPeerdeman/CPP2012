@@ -27,6 +27,8 @@ queue_t *newQueue(){
 	
 	pthread_cond_init(queue->full, NULL);
 	pthread_cond_init(queue->empty, NULL);
+	
+	//TODO: return value
 }
 
 //clean up the queue
@@ -90,4 +92,6 @@ unsigned long long dequeue(queue_t *queue){
 	pthread_cond_signal(queue->full);
 	
 	pthread_mutex_unlock(queue->lock);
+	
+	//TODO: return value
 }
