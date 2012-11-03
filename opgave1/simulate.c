@@ -14,7 +14,6 @@
 typedef struct{
 	int i_min;
 	int i_max;
-	int t_max;
 } i_range_t;
 
 
@@ -22,6 +21,7 @@ typedef struct{
 double *gl_old_array;
 double *gl_current_array;
 double *gl_next_array;
+int gl_t_max;
 
 int nThreadsUnfinished;
 int numThreads;
@@ -36,7 +36,7 @@ void *compute(void *p){
 	
 	int t;
 	
-	for(t = 0; t < range->t_max; t++){
+	for(t = 0; t < gl_t_max; t++){
 		printf("Hello world! (%d) Range: %d-%d\n", t, range->i_min, range->i_max);
 		
 		// Calculate Ai_min, t t/m Ai_max, t here
@@ -76,6 +76,7 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
 	gl_old_array = old_array;
 	gl_current_array = current_array;
 	gl_next_array = next_array;
+	gl_t_max = t_max;
 	numThreads = num_threads;
 	
 	int nThread;
@@ -106,7 +107,6 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
 	for(nThread = 0; nThread < num_threads; nThread++){
 		// Set the i range the thread should calculate
 		iRanges[nThread].i_min = iPerThread * nThread;
-		iRanges[nThread].t_max = t_max;
 		if(nThread + 1 == num_threads){
 			iRanges[nThread].i_max = i_max - 1;
 		}else{
@@ -130,8 +130,8 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
 	*/
 	
 	// free memory when complete
-    free(threadIds);
-    free(iRanges);
+  free(threadIds);
+  free(iRanges);
 
 	/* You should return a pointer to the array with the final results. */
 	return next_array;
