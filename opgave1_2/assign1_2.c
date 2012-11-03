@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <math.h>
 #include <pthread.h>
+#include "queue.h"
 
 typedef struct{
 	int known_nr;
@@ -25,9 +26,12 @@ int main(int argc, char *argv[]){
     upperbound = LLONG_MAX;
   }
   printf("Upperbound for primes: %lld\n",upperbound);
+  //create the first queu
+  queue_t *first_queue = newQueue();
 
+  //add all the rational numbers to the first queue
   for(counter = 2; counter<upperbound; counter++){
-      
+    enqueue(first_queue, counter);
   }
   
   return 0;

@@ -17,7 +17,7 @@ queue_t *newQueue(){
 		return NULL;
 	}
 	
-	queue->readptr = 0;
+	queue->readPtr = 0;
 	queue->writePtr = 0;
 	queue->fill = 0;
 	
@@ -35,7 +35,7 @@ void freeQueue(queue_t *queue){
 		}
 		
 		if(queue->lock != NULL){
-			pthread_mutex_destory(queue->lock);
+			pthread_mutex_destroy(queue->lock);
 		}
 		
 		if(queue->full != NULL){
