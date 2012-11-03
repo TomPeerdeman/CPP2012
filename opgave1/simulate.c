@@ -11,6 +11,8 @@
 
 #include "simulate.h"
 
+#define SPATIAL_IMPACT 0.2
+
 typedef struct{
 	int i_min;
 	int i_max;
@@ -22,6 +24,7 @@ double *gl_old_array;
 double *gl_current_array;
 double *gl_next_array;
 int gl_t_max;
+int gl_i_max;
 
 int nThreadsUnfinished;
 int numThreads;
@@ -30,16 +33,23 @@ pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 /* Add any functions you may need (like a worker) here. */
 void *compute(void *p){
-	// bereken A voor gegeven i's -> wachten tot alle threads klaar zijn
-	// --> berekenen A voor gegeven i's voor t+1 --> etc
 	i_range_t *range = (i_range_t *) p;
 	
 	int t;
-	
+	int i;
 	for(t = 0; t < gl_t_max; t++){
 		printf("Hello world! (%d) Range: %d-%d\n", t, range->i_min, range->i_max);
 		
 		// Calculate Ai_min, t t/m Ai_max, t here
+		for(i = range->i_min; i <= range->i_max; i++){
+			gl_next_array[i] = 2 * gl_current_array[i] - gl_old_array[i]
+				+ SPATIAL_IMPACT * (
+					((i > 1) ? gl_current_array[i - 1] : 0) - (
+						2 * gl_current_array[i] - 
+						((i < gl_i_max - 1) ? gl_current_array[i + 1]: 0)
+					)
+				);
+		}
 		
 		pthread_mutex_lock(&lock);
 		nThreadsUnfinished--;
@@ -54,6 +64,7 @@ void *compute(void *p){
 			// Wait till all threads have completed this t
 			pthread_cond_wait(&threadsDone, &lock);
 		}
+		break;
 		pthread_mutex_unlock(&lock);
 	}
 	return NULL;
@@ -77,25 +88,27 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
 	gl_current_array = current_array;
 	gl_next_array = next_array;
 	gl_t_max = t_max;
+	gl_i_max = i_max;
 	numThreads = num_threads;
 	
 	int nThread;
 	int iPerThread = i_max / num_threads;
 
 	pthread_t *threadIds;
-	//locate memory for the threadIds if possible, else break
+	// locate memory for the threadIds if possible, else break
 	threadIds = malloc(num_threads*sizeof(pthread_t));
 	if(threadIds == NULL){
-	  perror("Error locating memory! \n");
-	  exit(1);
+		perror("Error locating memory! \n");
+		exit(1);
 	}
 	
 	i_range_t *iRanges;
-	//locate memory for the iRanges if possible, else break
+	// locate memory for the iRanges if possible, else break
 	iRanges = malloc(num_threads*sizeof(i_range_t));
 	if(iRanges == NULL){
-	  perror("Error locating memory! \n");
-	  exit(1);
+		free(threadIds);
+		perror("Error locating memory! \n");
+		exit(1);
 	}
 	
 	pthread_attr_t attr;
@@ -130,8 +143,8 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
 	*/
 	
 	// free memory when complete
-  free(threadIds);
-  free(iRanges);
+	free(threadIds);
+	free(iRanges);
 
 	/* You should return a pointer to the array with the final results. */
 	return next_array;
