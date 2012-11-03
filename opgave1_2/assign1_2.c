@@ -10,8 +10,8 @@ typedef struct{
 
 int main(int argc, char *argv[]){
   //pthread_t *threads = NULL;
-  int upperbound;
-  int counter = INT_MAX;
+  unsigned long long upperbound;
+  unsigned long long counter;
   
   /* 
    * You can give an argument telling the program you only want prime numbers
@@ -22,13 +22,13 @@ int main(int argc, char *argv[]){
     upperbound = atoi(argv[1]);
   }
   else{
-    upperbound = INT_MAX;
+    upperbound = LLONG_MAX;
   }
-  printf("Upperbound for primes: %d\n",upperbound);
-  while(counter < upperbound){
-    counter++;
-  }
+  printf("Upperbound for primes: %lld\n",upperbound);
 
+  for(counter = 2; counter<upperbound; counter++){
+      
+  }
   
   return 0;
 }
