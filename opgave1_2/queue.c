@@ -3,6 +3,7 @@
 
 #include "queue.h"
 
+//initialize a queue
 queue_t *newQueue(){
 	queue_t *queue = malloc(sizeof(queue_t));
 	if(queue == NULL){
@@ -28,6 +29,7 @@ queue_t *newQueue(){
 	pthread_cond_init(queue->empty, NULL);
 }
 
+//clean up the queue
 void freeQueue(queue_t *queue){
 	if(queue != NULL){
 		if(queue->queue != NULL){
@@ -50,6 +52,7 @@ void freeQueue(queue_t *queue){
 	}
 }
 
+// add a value to the queue
 void enqueue(queue_t *queue, unsigned long long val){
 	pthread_mutex_lock(queue->lock);
 	// Queue full, sleep till a space is available
@@ -68,6 +71,7 @@ void enqueue(queue_t *queue, unsigned long long val){
 	pthread_mutex_unlock(queue->lock);
 }
 
+// remove the first number from the queue
 unsigned long long dequeue(queue_t *queue){
 	unsigned long long val;
 	

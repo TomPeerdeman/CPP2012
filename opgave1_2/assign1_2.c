@@ -26,10 +26,13 @@ int main(int argc, char *argv[]){
     upperbound = LLONG_MAX;
   }
   printf("Upperbound for primes: %lld\n",upperbound);
-  //create the first queu
+  // create the first queu
   queue_t *first_queue = newQueue();
 
-  //add all the rational numbers to the first queue
+  /*
+   * add all the rational numbers to the first queue, if the queue is full
+   * the number waits to be added.
+   */
   for(counter = 2; counter<upperbound; counter++){
     enqueue(first_queue, counter);
   }
