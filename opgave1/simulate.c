@@ -37,7 +37,7 @@ void *compute(void *p){
 	
 	int t;
 	int i;
-	double *temp;
+	double *temp, *temp2;
 	
 	for(t = 0; t < gl_t_max; t++){		
 		// Calculate Ai_min, t t/m Ai_max, t here
@@ -61,8 +61,10 @@ void *compute(void *p){
 			
 			//TODO: swap buffers
 			temp = gl_next_array;
+			temp2 = gl_old_array
 			gl_old_array = gl_current_array;
 			gl_current_array = temp;
+			gl_next_array = temp2;
 		}else{
 			// Wait till all threads have completed this t
 			pthread_cond_wait(&threadsDone, &lock);
