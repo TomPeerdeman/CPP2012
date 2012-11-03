@@ -37,9 +37,9 @@ void *compute(void *p){
 	
 	int t;
 	int i;
-	for(t = 0; t < gl_t_max; t++){
-		printf("Hello world! (%d) Range: %d-%d\n", t, range->i_min, range->i_max);
-		
+	double *temp;
+	
+	for(t = 0; t < gl_t_max; t++){		
 		// Calculate Ai_min, t t/m Ai_max, t here
 		for(i = range->i_min; i <= range->i_max; i++){
 			gl_next_array[i] = 2 * gl_current_array[i] - gl_old_array[i]
@@ -60,11 +60,14 @@ void *compute(void *p){
 			nThreadsUnfinished = numThreads;
 			
 			//TODO: swap buffers
+			temp = gl_next_array;
+			gl_old_array = gl_current_array;
+			gl_current_array = temp;
 		}else{
 			// Wait till all threads have completed this t
 			pthread_cond_wait(&threadsDone, &lock);
 		}
-		break;
+		t = gl_t_max + 1;
 		pthread_mutex_unlock(&lock);
 	}
 	return NULL;
