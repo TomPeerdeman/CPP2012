@@ -4,7 +4,7 @@
 #include <pthread.h>
 
 typedef struct{
-	long long *queue;
+	unsigned long long *queue;
 	int readPtr;
 	int writePtr;
 	int fill;
@@ -13,8 +13,8 @@ typedef struct{
 	pthread_cond_t empty;
 } queue_t;
 
-void enqueue(long long v);
+void enqueue(unsigned long long v);
 
-long long dequeue();
+unsigned long long dequeue();
 
 #endif
