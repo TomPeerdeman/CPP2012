@@ -13,8 +13,8 @@ typedef struct{
 	pthread_cond_t empty;
 } queue_t;
 
-void enqueue(unsigned long long v);
+void enqueue(queue_t *queue, unsigned long long v);
 
-unsigned long long dequeue();
+unsigned long long dequeue(queue_t *queue);
 
 #endif
