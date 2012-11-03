@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 #include <pthread.h>
+#include <errno.h>
 
 #include "simulate.h"
 
@@ -40,7 +41,7 @@ void *compute(void *p){
 	double *temp;
 	
 	for(t = 0; t < gl_t_max; t++){		
-		// Calculate Ai_min, t t/m Ai_max, t here
+		// Calculate Ai_min, t up to and including Ai_max, t here
 		for(i = range->i_min; i <= range->i_max; i++){
 			gl_next_array[i] = 2 * gl_current_array[i] - gl_old_array[i]
 				+ SPATIAL_IMPACT * (
@@ -54,12 +55,16 @@ void *compute(void *p){
 		pthread_mutex_lock(&lock);
 		nThreadsUnfinished--;
 		if(nThreadsUnfinished == 0){
-			// Signal waiting threads, this t is complete.
+			/* Signal waiting threads, this t is complete.
+			 * We can signal before the buffers are rotated because
+			 * the waiting threads need to aquire the lock first
+			 * that this thread holds to continue.
+			 */
 			pthread_cond_broadcast(&threadsDone);
 			// Reset num unfinished threads
 			nThreadsUnfinished = numThreads;
 			
-			// Swap buffers
+			// Rotate buffers
 			temp = gl_old_array;
 			gl_old_array = gl_current_array;
 			gl_current_array = gl_next_array;
@@ -86,7 +91,7 @@ void *compute(void *p){
  * current_array: array of size i_max filled with data for t
  * next_array: array of size i_max. You should fill this with t+1
  */
-double *simulate(const int i_max, const int t_max, const int num_threads,
+double *simulate(const int i_max, const int t_max, int num_threads,
 		double *old_array, double *current_array, double *next_array){
 	gl_old_array = old_array;
 	gl_current_array = current_array;
@@ -131,7 +136,28 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
 		}
 		
 		// TODO: check return waarde
-		pthread_create(&threadIds[nThread], &attr, &compute, &iRanges[nThread]);
+		int err = pthread_create(&threadIds[nThread], &attr, &compute, 
+			&iRanges[nThread]);
+		if(err){
+			switch(err){
+				case EAGAIN:
+					printf("Error creating thread %d/%d: Insufficient" 
+						"resources (%d)\n", nThread, num_threads,
+						err);
+					break;
+				case EPERM:
+					printf("Error creating thread %d/%d:"
+						"No permission to set the scheduling "
+						"policy and parameters specified (%d)\n",
+						nThread, num_threads, err);
+					break;
+				default:
+					printf("Error creating thread %d/%d: error %d\n",
+						nThread, num_threads, err);
+			}
+			num_threads = nThread;
+			break;
+		}			
 	}
 	
 	void *result;
