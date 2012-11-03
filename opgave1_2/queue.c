@@ -78,7 +78,7 @@ unsigned long long dequeue(queue_t *queue){
 	
 	pthread_mutex_lock(&queue->lock);
 	// Queue empty, sleep for item to arrive
-	while(&queue->fill == 0){
+	while(queue->fill == 0){
 		pthread_cond_wait(&queue->empty, &queue->lock);
 	}
 	

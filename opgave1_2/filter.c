@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <limits.h>
 
 #include "filter.h"
 
@@ -7,8 +8,15 @@ void startFilter(queue_t *queue){
 	pthread_t threadId;
 	
 	// TODO: Set attributes
+	pthread_attr_t attr;
+	pthread_attr_init(&attr);
+	pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
+	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
+	pthread_attr_setstacksize(&attr, PTHREAD_STACK_MIN);
 	
-	pthread_create(&threadId, NULL, &filter, queue);
+	pthread_create(&threadId, &attr, &filter, queue);
+	
+	pthread_attr_destroy(&attr);
 }
 
 void *filter(void *p){
@@ -26,7 +34,7 @@ void *filter(void *p){
 			}
 		}else{
 			divider = val;
-			printf("%llu", divider);
+			printf("%llu\n", divider);
 			do{
 				val = dequeue(inQueue);
 			}while(val % divider == 0);

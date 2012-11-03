@@ -33,7 +33,7 @@ int main(int argc, char *argv[]){
 	* add all the rational numbers to the first queue, if the queue is full
 	* the number waits to be added.
 	*/
-	for(counter = 2; counter<upperbound; counter++){
+	for(counter = 2; counter < upperbound; counter++){
 		enqueue(first_queue, counter);
 	}
 
