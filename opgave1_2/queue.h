@@ -15,7 +15,7 @@ typedef struct{
 	pthread_cond_t empty;
 } queue_t;
 
-queue_t *newQueue();
+queue_t *newQueue(void);
 
 void freeQueue(queue_t *queue);
 
