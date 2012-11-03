@@ -26,7 +26,7 @@ int main(int argc, char *argv[]){
     upperbound = LLONG_MAX;
   }
   printf("Upperbound for primes: %lld\n",upperbound);
-  // create the first queu
+  // create the first queue
   queue_t *first_queue = newQueue();
 
   /*
@@ -35,11 +35,8 @@ int main(int argc, char *argv[]){
    */
   for(counter = 2; counter<upperbound; counter++){
     enqueue(first_queue, counter);
+    
   }
   
   return 0;
-}
-
-void *compute(void *p){
-
 }
