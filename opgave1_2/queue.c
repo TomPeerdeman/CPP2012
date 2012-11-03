@@ -3,7 +3,7 @@
 
 #include "queue.h"
 
-//initialize a queue
+// initialize a queue
 queue_t *newQueue(){
 	queue_t *queue = malloc(sizeof(queue_t));
 	if(queue == NULL){
@@ -28,10 +28,10 @@ queue_t *newQueue(){
 	pthread_cond_init(queue->full, NULL);
 	pthread_cond_init(queue->empty, NULL);
 	
-	//TODO: return value
+	return queue;
 }
 
-//clean up the queue
+// clean up the queue
 void freeQueue(queue_t *queue){
 	if(queue != NULL){
 		if(queue->queue != NULL){
@@ -93,5 +93,5 @@ unsigned long long dequeue(queue_t *queue){
 	
 	pthread_mutex_unlock(queue->lock);
 	
-	//TODO: return value
+	return val;
 }

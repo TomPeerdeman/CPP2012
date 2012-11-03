@@ -1,30 +1,39 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "queue.h"
 #include "filter.h"
 
-filter_t *newFilter(unsigned long long value, queue_t *old){
-	filter_t *filter = malloc(sizeof(filter_t));
-	if(filter == NULL){
-		perror("Error: memory allocation");
-		return NULL;
-	}
-
-  filter->filter_value = value;
-  filter->old_queue = old;
-  //no new queue yet, only after the filter finds a prime.
-  filter->next_queue = NULL;
-  
-	pthread_mutex_init(filter->lock, NULL);
-  
-  return filter;
+void startFilter(queue_t *queue){
+	pthread_t threadId;
+	
+	// TODO: Set attributes
+	
+	pthread_create(&threadId, NULL, &filter, queue);
 }
 
 void *filter(void *p){
+	queue_t *inQueue = (queue_t *) p;
+	queue_t *outQueue = NULL;
+	unsigned long long val;
+	unsigned long long divider;
 
-  /*
-   *if(filter->next_queue == NULL)
-   *  next_queue = newqueue();
-   */
+	while(1){
+		val = dequeue(inQueue);
+		
+		if(outQueue != NULL){
+			if(val % divider != 0){
+				enqueue(outQueue, val);
+			}
+		}else{
+			divider = val;
+			printf("%llu", divider);
+			do{
+				val = dequeue(inQueue);
+			}while(val % divider == 0);
+			// TODO: check null pointer if failed
+			outQueue = newQueue();
+			enqueue(outQueue, val);
+			startFilter(outQueue);
+		}
+	}
 }

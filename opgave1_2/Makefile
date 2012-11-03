@@ -1,5 +1,5 @@
 PROGNAME = assign1_2
-SRCFILES = assign1_2.c queue.c
+SRCFILES = assign1_2.c queue.c filter.c
 TARNAME = assign1_2.tgz
 
 CC = gcc
