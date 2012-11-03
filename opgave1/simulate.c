@@ -80,10 +80,19 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
 	
 	int nThread;
 	int iPerThread = i_max / num_threads;
-	
-	// TODO: vervangen door malloc
-	pthread_t threadIds[num_threads];
-	i_range_t iRanges[num_threads];
+
+	pthread_t *threadIds;
+	threadIds = malloc(num_threads*sizeof(pthread_t));
+	if(threadIds == NULL){
+	  perror("Error locating memory! \n");
+	  exit(1);
+	}
+	i_range_t *iRanges;
+	iRanges = malloc(num_threads*sizeof(i_range_t));
+	if(iRanges == NULL){
+	  perror("Error locating memory! \n");
+	  exit(1);
+	}
 	
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
@@ -116,7 +125,8 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
 	* After each timestep, you should swap the buffers around. Watch out none
 	* of the threads actually use the buffers at that time.
 	*/
-
+  free(threadIds);
+  free(iRanges);
 
 	/* You should return a pointer to the array with the final results. */
 	return next_array;
