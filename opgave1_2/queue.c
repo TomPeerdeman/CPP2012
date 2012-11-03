@@ -23,10 +23,9 @@ queue_t *newQueue(){
 	queue->fill = 0;
 	
 	// TODO: check return waarde?
-	pthread_mutex_init(queue->lock, NULL);
-	
-	pthread_cond_init(queue->full, NULL);
-	pthread_cond_init(queue->empty, NULL);
+	pthread_mutex_init(&queue->lock, NULL);
+	pthread_cond_init(&queue->full, NULL);
+	pthread_cond_init(&queue->empty, NULL);
 	
 	return queue;
 }
@@ -34,20 +33,20 @@ queue_t *newQueue(){
 // clean up the queue
 void freeQueue(queue_t *queue){
 	if(queue != NULL){
-		if(queue->queue != NULL){
+		if(&queue->queue != NULL){
 			free(queue->queue);
 		}
 		
-		if(queue->lock != NULL){
-			pthread_mutex_destroy(queue->lock);
+		if(&queue->lock != NULL){
+			pthread_mutex_destroy(&queue->lock);
 		}
 		
-		if(queue->full != NULL){
-			pthread_cond_destroy(queue->full);
+		if(&queue->full != NULL){
+			pthread_cond_destroy(&queue->full);
 		}
 		
-		if(queue->empty != NULL){
-			pthread_cond_destroy(queue->empty);
+		if(&queue->empty != NULL){
+			pthread_cond_destroy(&queue->empty);
 		}
 		
 		free(queue);
@@ -56,10 +55,10 @@ void freeQueue(queue_t *queue){
 
 // add a value to the queue
 void enqueue(queue_t *queue, unsigned long long val){
-	pthread_mutex_lock(queue->lock);
+	pthread_mutex_lock(&queue->lock);
 	// Queue full, sleep till a space is available
 	while(queue->fill == BUFFER_SIZE){
-		pthread_cond_wait(queue->full, queue->lock);
+		pthread_cond_wait(&queue->full, &queue->lock);
 	}
 	
 	queue->queue[queue->writePtr++] = val;
@@ -68,19 +67,19 @@ void enqueue(queue_t *queue, unsigned long long val){
 	queue->fill++;
 	
 	// Signal sleeping consumer
-	pthread_cond_signal(queue->empty);
+	pthread_cond_signal(&queue->empty);
 	
-	pthread_mutex_unlock(queue->lock);
+	pthread_mutex_unlock(&queue->lock);
 }
 
 // remove the first number from the queue
 unsigned long long dequeue(queue_t *queue){
 	unsigned long long val;
 	
-	pthread_mutex_lock(queue->lock);
+	pthread_mutex_lock(&queue->lock);
 	// Queue empty, sleep for item to arrive
-	while(queue->fill == 0){
-		pthread_cond_wait(queue->empty, queue->lock);
+	while(&queue->fill == 0){
+		pthread_cond_wait(&queue->empty, &queue->lock);
 	}
 	
 	val = queue->queue[queue->readPtr++];
@@ -89,9 +88,9 @@ unsigned long long dequeue(queue_t *queue){
 	queue->fill--;
 	
 	// Signal sleeping producer
-	pthread_cond_signal(queue->full);
+	pthread_cond_signal(&queue->full);
 	
-	pthread_mutex_unlock(queue->lock);
+	pthread_mutex_unlock(&queue->lock);
 	
 	return val;
 }

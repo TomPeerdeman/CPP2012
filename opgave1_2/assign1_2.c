@@ -32,7 +32,6 @@ int main(int argc, char *argv[]){
    */
   for(counter = 2; counter<upperbound; counter++){
     enqueue(first_queue, counter);
-    
   }
   
   return 0;
