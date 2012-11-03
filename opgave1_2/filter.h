@@ -7,7 +7,7 @@ typedef struct{
 	pthread_mutex_t *lock;
 } filter_t;
 
-filter_t *newFilter();
+filter_t *newFilter(unsigned long long value);
 
 void *filter(void *p);
 

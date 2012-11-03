@@ -4,7 +4,7 @@
 #include "queue.h"
 
 //initialize a queue
-queue_t *newQueue(){
+queue_t *newQueue(unsigned long long filter_value){
 	queue_t *queue = malloc(sizeof(queue_t));
 	if(queue == NULL){
 		perror("Error: memory allocation");
@@ -21,8 +21,9 @@ queue_t *newQueue(){
 	queue->readPtr = 0;
 	queue->writePtr = 0;
 	queue->fill = 0;
+	//queue->filter = newFilter(filter_value);
 	
-	// TDOD: check return waarde?
+	// TODO: check return waarde?
 	pthread_mutex_init(queue->lock, NULL);
 	
 	pthread_cond_init(queue->full, NULL);

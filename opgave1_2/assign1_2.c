@@ -27,7 +27,7 @@ int main(int argc, char *argv[]){
   }
   printf("Upperbound for primes: %lld\n",upperbound);
   // create the first queue
-  queue_t *first_queue = newQueue();
+  queue_t *first_queue = newQueue(2);
 
   /*
    * add all the rational numbers to the first queue, if the queue is full
