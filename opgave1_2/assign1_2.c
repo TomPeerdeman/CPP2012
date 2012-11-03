@@ -4,10 +4,7 @@
 #include <math.h>
 #include <pthread.h>
 #include "queue.h"
-
-typedef struct{
-	int known_nr;
-} filter;
+#include "filter.h"
 
 int main(int argc, char *argv[]){
   //pthread_t *threads = NULL;
