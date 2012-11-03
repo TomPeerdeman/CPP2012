@@ -14,6 +14,7 @@
 typedef struct{
 	int i_min;
 	int i_max;
+	int t_max;
 } i_range_t;
 
 
@@ -34,8 +35,8 @@ void *compute(void *p){
 	i_range_t *range = (i_range_t *) p;
 	
 	int t;
-	// TODO: t_max ipv 10
-	for(t = 0; t < 10; t++){
+	
+	for(t = 0; t < range->t_max; t++){
 		printf("Hello world! (%d) Range: %d-%d\n", t, range->i_min, range->i_max);
 		
 		// Calculate Ai_min, t t/m Ai_max, t here
@@ -93,7 +94,7 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
 	for(nThread = 0; nThread < num_threads; nThread++){
 		// Set the i range the thread should calculate
 		iRanges[nThread].i_min = iPerThread * nThread;
-		
+		iRanges[nThread].t_max = t_max;
 		if(nThread + 1 == num_threads){
 			iRanges[nThread].i_max = i_max - 1;
 		}else{
