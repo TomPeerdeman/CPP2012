@@ -36,6 +36,7 @@ int main(int argc, char *argv[]){
 	for(counter = 2; counter < upperbound; counter++){
 		enqueue(first_queue, counter);
 	}
+	printf("hello\n");
 
 	return 0;
 }
