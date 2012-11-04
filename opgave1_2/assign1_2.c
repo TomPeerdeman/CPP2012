@@ -3,6 +3,7 @@
 #include <limits.h>
 #include <math.h>
 #include <pthread.h>
+
 #include "queue.h"
 #include "filter.h"
 
@@ -26,7 +27,7 @@ int main(int argc, char *argv[]){
 	// create the first queue
 	queue_t *first_queue = newQueue();
 
-	startFilter(first_queue);
+	pthread_t *first_thread = startFilter(first_queue);
 	printf("Started first filter\n");
 
 	/*
@@ -36,8 +37,14 @@ int main(int argc, char *argv[]){
 	for(counter = 2; counter < upperbound; counter++){
 		enqueue(first_queue, counter);
 	}
+	printf("Done filling \n");
 	//send the number one, this way the filters will know they have to terminate.
-  enqueue(first_queue, 1);
+	enqueue(first_queue, 1);
+	
+	void *result;
+	pthread_join(*first_thread, &result);
+	
+	freeQueue(first_queue);
 
 	return 0;
 }

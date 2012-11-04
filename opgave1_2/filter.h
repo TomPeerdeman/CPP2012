@@ -3,7 +3,7 @@
 
 #include "queue.h"
 
-void startFilter(queue_t *queue);
+pthread_t *startFilter(queue_t *queue);
 
 void *filter(void *p);
 
