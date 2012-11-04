@@ -36,7 +36,8 @@ int main(int argc, char *argv[]){
 	for(counter = 2; counter < upperbound; counter++){
 		enqueue(first_queue, counter);
 	}
-	printf("hello\n");
+	//send the number one, this way the filters will know they have to terminate.
+  enqueue(first_queue, 1);
 
 	return 0;
 }
