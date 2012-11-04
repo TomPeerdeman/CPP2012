@@ -32,6 +32,11 @@ void *filter(void *p){
 			if(val % divider != 0){
 				enqueue(outQueue, val);
 			}
+			// if the value 1 is given, start with terminating this filter.
+			if(val == 1){
+				enqueue(outQueue, val);
+				printf("i have to die :(\n");			  
+			}
 		}else{
 			divider = val;
 			printf("%llu\n", divider);
