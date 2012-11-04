@@ -7,13 +7,12 @@
 pthread_t *startFilter(queue_t *queue){
 	pthread_t *threadId = malloc(sizeof(pthread_t));
 	
-	// TODO: Set attributes
 	pthread_attr_t attr;
 	pthread_attr_init(&attr);
 	pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
-	//pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 	pthread_attr_setstacksize(&attr, PTHREAD_STACK_MIN);
 	
+	// TODO: check return waarde
 	pthread_create(threadId, &attr, &filter, queue);
 	
 	pthread_attr_destroy(&attr);
@@ -35,7 +34,6 @@ void *filter(void *p){
 			// if the value 1 is given, start with terminating this filter.
 			if(val == 1){
 				enqueue(outQueue, val);
-				printf("i have to die (%llu):(\n", divider);
 				void *result;
 				pthread_join(*nextThread, &result);
 				free(nextThread);
@@ -70,6 +68,5 @@ void *filter(void *p){
 	}
 	
 	
-	printf("%llu done.\n", divider);
 	return NULL;
 }
