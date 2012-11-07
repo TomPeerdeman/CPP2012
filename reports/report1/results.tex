@@ -15,13 +15,13 @@
 \lfoot{\small \color{gray}Tom Peerdeman - 10266186}
 \cfoot{\thepage}
 \rfoot{\small \color{gray}Ren\'e Aparicio Sa\'ez - 10214054}
-\lhead{\small \color{gray}Multithreaded Wave}
+\lhead{\small \color{gray} Multithreaded Programs}
 \begin{document}
 	\begin{titlepage}
 	\begin{center}
 		\textsc{\Large Concurrency \& Parallel Programming}\\[0.5cm]
 		\HRule \\[0,4cm]
-		\textsc{\huge \bfseries Multithreaded Wave}
+		\textsc{\huge \bfseries Multithreaded Programs}
 		\HRule \\[8cm]
 		\begin{minipage}{0.4\textwidth}
 			\begin{flushleft}\large
@@ -36,14 +36,15 @@
 	\end{center}
 	\end{titlepage}
 
-  \section{Table with results}
-    Test on DAS4 are run for i = 1.000.000 and t = 1.000.
+  \section{Assignment 1.1 - Wave simulation}
+  \subsection{Table with results}
+    Tests on DAS4 are run for i = 1.000.000 and t = 1.000.
     The amount of threads used to generate the waves is increased to meassure the
     difference in speed for the program.
     Each amount of threads is run 12 times. 
     The highest value and the lowest value is disregarded. 
     The remaining data is used to plot a graph.\\\\
-    \begin{tabular}{|c | c | c | c | c | c | c | c |}
+    \begin{tabular}{| c | c | c | c | c | c | c | c |}
       \hline
       \multicolumn{4}{|c}{i = 1,000,000} & \multicolumn{4}{c|}{t = 1,000}\\
       \hline
@@ -81,5 +82,11 @@
     \begin{center}
       \includegraphics[width=0.9\textwidth]{speedplot.png}
     \end{center}
-    Apparantly the preformance is better if an even number of threads is used.
+    Apparantly the performance is better if an even number of threads is used.
+  \section{Assignment 1.2 - Sieve of Erasthotenes}
+    On DAS4 (and on the uva computers) the program an error occurs.
+    There are too many threads alive to create a new thread. This is understandable, because
+    a new thread is created for every prime number found by the program.
+    Which results in quite a high amount of threads.
+    
 \end{document}
