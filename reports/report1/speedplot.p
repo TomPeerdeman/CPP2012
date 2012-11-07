@@ -5,7 +5,7 @@ set xtic auto                          # set xtics automatically
 set ytic auto                          # set ytics automatically
 set title "Wave Simulation"
 set xlabel "Threads"
-set ylabel "Total time"
+set ylabel "Average Total Time"
 set grid x y
 unset colorbox
 
