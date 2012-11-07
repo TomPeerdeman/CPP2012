@@ -1,8 +1,6 @@
 #ifndef QUEUE_H
 #define QUEUE_H
 
-#include <pthread.h>
-
 #define BUFFER_SIZE 100
 
 typedef struct{

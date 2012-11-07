@@ -36,7 +36,7 @@ todo:
 		done; true
 
 dist:
-	tar cvzf $(TARNAME) Makefile *.c *.h data/
+	tar cvzf $(TARNAME) Makefile *.c *.h
 
 clean:
 	rm -fv $(PROGNAME) $(OBJFILES) $(TARNAME)

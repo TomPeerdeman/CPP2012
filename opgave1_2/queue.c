@@ -1,9 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <pthread.h>
 
 #include "queue.h"
 
-// initialize a queue
+// Initialize a queue.
 queue_t *newQueue(){
 	queue_t *queue = malloc(sizeof(queue_t));
 	if(queue == NULL){
@@ -22,15 +23,29 @@ queue_t *newQueue(){
 	queue->writePtr = 0;
 	queue->fill = 0;
 	
-	// TODO: check return waarde?
-	pthread_mutex_init(&queue->lock, NULL);
-	pthread_cond_init(&queue->full, NULL);
-	pthread_cond_init(&queue->empty, NULL);
+	int err = pthread_mutex_init(&queue->lock, NULL);
+	if(err){
+		printf("Error: mutex init: %d\n", err);
+		freeQueue(queue);
+		return NULL;
+	}
+	err = pthread_cond_init(&queue->full, NULL);
+	if(err){
+		printf("Error: (full) cond init: %d\n", err);
+		freeQueue(queue);
+		return NULL;
+	}
+	err = pthread_cond_init(&queue->empty, NULL);
+	if(err){
+		printf("Error: (empty) cond init: %d\n", err);
+		freeQueue(queue);
+		return NULL;
+	}
 	
 	return queue;
 }
 
-// clean up the queue
+// Clean up the queue.
 void freeQueue(queue_t *queue){
 	if(queue != NULL){
 		if(&queue->queue != NULL){
@@ -53,7 +68,7 @@ void freeQueue(queue_t *queue){
 	}
 }
 
-// add a value to the queue
+// Add a value to the queue.
 void enqueue(queue_t *queue, unsigned long long val){
 	pthread_mutex_lock(&queue->lock);
 	// Queue full, sleep till a space is available
@@ -72,7 +87,7 @@ void enqueue(queue_t *queue, unsigned long long val){
 	pthread_mutex_unlock(&queue->lock);
 }
 
-// remove the first number from the queue
+// Remove the first number from the queue.
 unsigned long long dequeue(queue_t *queue){
 	unsigned long long val;
 	
