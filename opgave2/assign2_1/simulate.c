@@ -29,8 +29,9 @@
  * next_array: array of size i_max. You should fill this with t+1
  */
 double *simulate(const int i_max, const int t_max, double *old_array,
-        double *current_array, double *next_array)
+        double *current_array, double *next_array, int my_rank, int num_tasks)
 {
+    printf("This is my rank: %d out of %d tasks", my_rank, num_tasks);
 
     /*
      * Your implementation should go here.

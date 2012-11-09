@@ -12,6 +12,7 @@
 #include "file.h"
 #include "timer.h"
 #include "simulate.h"
+#include "mpi.h"
 
 typedef double (*func_t)(double x);
 
@@ -82,6 +83,16 @@ int main(int argc, char *argv[])
         printf("argument error: t_max should be >=1.\n");
         return EXIT_FAILURE;
     }
+    
+    //Setting up MPI
+    int rc , num_tasks , my_rank;
+    rc = MPI_Init (&argc, &argv);
+	if ( rc != MPI_SUCCESS ) { // Check for success
+        fprintf ( stderr , " Unable to set up MPI ");
+        MPI_Abort ( MPI_COMM_WORLD , rc ); // Abort MPI runtime
+    }
+    MPI_Comm_size ( MPI_COMM_WORLD , &num_tasks ); // Determine number of tasks
+    MPI_Comm_rank ( MPI_COMM_WORLD , &my_rank );
 
     /* Allocate and initialize buffers. */
     old = malloc(i_max * sizeof(double));
@@ -130,7 +141,7 @@ int main(int argc, char *argv[])
     timer_start();
 
     /* Call the actual simulation that should be implemented in simulate.c. */
-    ret = simulate(i_max, t_max, old, current, next);
+    ret = simulate(i_max, t_max, old, current, next, my_rank, num_tasks);
 
     time = timer_end();
     printf("Took %g seconds\n", time);
@@ -141,6 +152,7 @@ int main(int argc, char *argv[])
     free(old);
     free(current);
     free(next);
+    MPI_Finalize(); // shutdown MPI
 
     return EXIT_SUCCESS;
 }
