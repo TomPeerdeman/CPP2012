@@ -8,6 +8,7 @@
 #include <stdlib.h>
 
 #include "simulate.h"
+#include "mpi.h"
 
 
 /* Add any global variables you may need. */
