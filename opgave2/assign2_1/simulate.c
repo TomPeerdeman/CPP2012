@@ -53,8 +53,16 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
      * Your implementation should go here.
      */
     
-    // MPI_Send(current_array[1], 1, MPI_DOUBLE, destination, tag, MPI_COMM_WORLD);
-    // MPI_Send(current_array[max_i], 1, MPI_DOUBLE, destination, tag, MPI_COMM_WORLD);
+    //Send only if left exists.
+    if(my_rank != 0){
+      MPI_Send(current_array[1], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD);    
+    }
+    
+    //Send only if right exists.
+    if(my_rank != num_tasks-1){
+      MPI_Send(current_array[max_i], 1, MPI_DOUBLE, my_rank+1, 1,
+    }
+    
     for(t = 0; t < t_max; t++){		
 		// Calculate Ai_min, t up to and including Ai_max, t here
 		  for(i = min_i; i < max_i; i++){
@@ -66,25 +74,31 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
 					  )
 				  );
 		  }
-		  /*
-		  MPI_Recv( current_array[max_i+1] , 1 , MPI_DOUBLE , from , tag , MPI_COMM_WORLD , & status );
+      if(my_rank != num_tasks-1){
+  		  MPI_Recv( current_array[max_i+1] , 1 , MPI_DOUBLE , my_rank+1 , 1 , MPI_COMM_WORLD , & status );
+  		}
 		  next_array[max_i] = 2 * current_array[max_i] - old_array[max_i]
 				  + SPATIAL_IMPACT * (
 					  ((max_i > 1) ? current_array[max_i - 1] : 0) - (
 						  2 * current_array[max_i] - 
 						  ((max_i < iPerTask - 1) ? current_array[max_i + 1]: 0)
 					  )
-				  ); 
-      MPI_Send(new_array[max_i], 1, MPI_DOUBLE, destination, tag, MPI_COMM_WORLD);
+				  );
 		  
-		  MPI_Recv( current_array[0] , 1 , MPI_DOUBLE , from , tag , MPI_COMM_WORLD , & status );
+		  //Send only if left exists.
+      if(my_rank != 0){
+        MPI_Send(new_array[max_i], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD);
+		  
+		  MPI_Recv( current_array[0] , 1 , MPI_DOUBLE , my_rank-1 , 1 , MPI_COMM_WORLD , & status );
+		  }
+		  
 		  next_array[1] = 2 * current_array[1] - old_array[1]
 				  - (2 * current_array[1] - current_array[2])
 				  ); 
-      MPI_Send(next_array[1], 1, MPI_DOUBLE, destination, tag, MPI_COMM_WORLD);
-		  */
-		  
-		  
+		  //Send only if left exists.
+      if(my_rank != num_tasks-1){
+        MPI_Send(next_array[1], 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD);
+		  }	  
 		  // Rotate buffers
 			temp = old_array;
 			old_array = current_array;
