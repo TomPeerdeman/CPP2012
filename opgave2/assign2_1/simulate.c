@@ -37,21 +37,13 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
     int i, t;
     
     //initialize i domains, considering halo cells if there are any.
-    if(my_rank == 0 && num_tasks == 1){
+    if(my_rank == num_tasks-1){
       min_i = 0;
-      max_i = iPerTask;    
-    }
-    else if(my_rank == 0){
-      min_i = 0;
-      max_i = iPerTask + 1;
-    }
-    else if(my_rank == num_tasks-1){
-      min_i = (num_tasks - 1) * iPerTask - 1;
-      max_i = num_tasks * iPerTask;
+      max_i = sizeof(current_array)/sizeof(int);
     }
     else{
-      min_i = my_rank * iPerTask - 1;
-      max_i = (my_rank + 1) * iPerTask + 1;
+      min_i = 1;
+      max_i = sizeof(current_array)/sizeof(int) - 1;
     }
     
     printf("This is my rank: %d out of %d tasks", my_rank, num_tasks);
@@ -61,7 +53,7 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
      */
     for(t = 0; t < t_max; t++){		
 		// Calculate Ai_min, t up to and including Ai_max, t here
-		  for(i = min_i; i <= i_max; i++){
+		  for(i = min_i; i < max_i; i++){
 			  /*gl_next_array[i] = 2 * gl_current_array[i] - gl_old_array[i]
 				  + SPATIAL_IMPACT * (
 					  ((i > 1) ? gl_current_array[i - 1] : 0) - (
