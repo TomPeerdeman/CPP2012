@@ -52,9 +52,9 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
     /*
      * Your implementation should go here.
      */
-     
-    // send(left_neighbour, cur[1])
-    // send(right_neighbour, cur[size])
+    
+    // MPI_Send(current_array[1], 1, MPI_DOUBLE, destination, tag, MPI_COMM_WORLD);
+    // MPI_Send(current_array[max_i], 1, MPI_DOUBLE, destination, tag, MPI_COMM_WORLD);
     for(t = 0; t < t_max; t++){		
 		// Calculate Ai_min, t up to and including Ai_max, t here
 		  for(i = min_i; i < max_i; i++){
@@ -66,7 +66,8 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
 					  )
 				  );
 		  }
-		  /*current_array[max_i+1] = receive(right_neighbour);
+		  /*
+		  MPI_Recv( current_array[max_i+1] , 1 , MPI_DOUBLE , from , tag , MPI_COMM_WORLD , & status );
 		  next_array[max_i] = 2 * current_array[max_i] - old_array[max_i]
 				  + SPATIAL_IMPACT * (
 					  ((max_i > 1) ? current_array[max_i - 1] : 0) - (
@@ -74,13 +75,13 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
 						  ((max_i < iPerTask - 1) ? current_array[max_i + 1]: 0)
 					  )
 				  ); 
-      send(right_neighbour, next_array[size])
+      MPI_Send(new_array[max_i], 1, MPI_DOUBLE, destination, tag, MPI_COMM_WORLD);
 		  
-		  current_array[0] = receive(left_neighbour);
+		  MPI_Recv( current_array[0] , 1 , MPI_DOUBLE , from , tag , MPI_COMM_WORLD , & status );
 		  next_array[1] = 2 * current_array[1] - old_array[1]
 				  - (2 * current_array[1] - current_array[2])
 				  ); 
-      send(left_neighbour, next_array[1])
+      MPI_Send(next_array[1], 1, MPI_DOUBLE, destination, tag, MPI_COMM_WORLD);
 		  */
 		  
 		  
@@ -90,8 +91,9 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
 			current_array = next_array;
 			next_array = temp;
 		}
-    //discard = receive(right_neighbour);
-    //discard = receive(left_neighbour);
+    
+    //MPI_Recv( discard , 1 , MPI_DOUBLE , from , tag , MPI_COMM_WORLD , & status );
+    //MPI_Recv( discard , 1 , MPI_DOUBLE , from , tag , MPI_COMM_WORLD , & status );
 
     /* You should return a pointer to the array with the final results. */
     return current_array;
