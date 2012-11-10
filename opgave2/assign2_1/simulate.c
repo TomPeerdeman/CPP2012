@@ -78,9 +78,8 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
 		  }
       if(my_rank != num_tasks-1){
   		  MPI_Recv(&current_array[max_i+1] , 1 , MPI_DOUBLE , my_rank+1 , 1 , MPI_COMM_WORLD , &status);
-  		}
   		
-		  next_array[max_i] = 2 * current_array[max_i] - old_array[max_i]
+		    next_array[max_i] = 2 * current_array[max_i] - old_array[max_i]
 				  + SPATIAL_IMPACT * (
 					  ((max_i > 1) ? current_array[max_i - 1] : 0) - (
 						  2 * current_array[max_i] - 
@@ -88,18 +87,18 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
 					  )
 				  );
 		  
+		    MPI_Send(&next_array[max_i], 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD);
+		  
+  		}
+  		
 		  //Send only if left exists.
       if(my_rank != 0){
-        MPI_Send(&next_array[max_i], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD);
 		    MPI_Recv(&current_array[0] , 1 , MPI_DOUBLE , my_rank-1 , 1 , MPI_COMM_WORLD , &status );
-		  }
 		  
-		  next_array[1] = 2 * current_array[1] - old_array[1]
+		    next_array[1] = 2 * current_array[1] - old_array[1]
 				  - (2 * current_array[1] - current_array[2]); 
 				  
-		  //Send only if left exists.
-      if(my_rank != num_tasks-1){
-        MPI_Send(&next_array[1], 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD);
+        MPI_Send(&next_array[1], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD);
 		  }	  
 		  // Rotate buffers
 			temp = old_array;
