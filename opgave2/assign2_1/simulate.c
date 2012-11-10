@@ -35,15 +35,16 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
 {
     int min_i, max_i;
     int i, t;
+    double *temp;
     
     //initialize i domains, considering halo cells if there are any.
     if(my_rank == num_tasks-1){
       min_i = 0;
-      max_i = sizeof(current_array)/sizeof(int);
+      max_i = sizeof(current_array)/sizeof(double);
     }
     else{
       min_i = 1;
-      max_i = sizeof(current_array)/sizeof(int) - 1;
+      max_i = sizeof(current_array)/sizeof(double) - 1;
     }
     
     printf("This is my rank: %d out of %d tasks", my_rank, num_tasks);
@@ -51,19 +52,46 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
     /*
      * Your implementation should go here.
      */
+     
+    // send(left_neighbour, cur[1])
+    // send(right_neighbour, cur[size])
     for(t = 0; t < t_max; t++){		
 		// Calculate Ai_min, t up to and including Ai_max, t here
 		  for(i = min_i; i < max_i; i++){
-			  /*gl_next_array[i] = 2 * gl_current_array[i] - gl_old_array[i]
+			  next_array[i] = 2 * current_array[i] - old_array[i]
 				  + SPATIAL_IMPACT * (
-					  ((i > 1) ? gl_current_array[i - 1] : 0) - (
-						  2 * gl_current_array[i] - 
-						  ((i < gl_i_max - 1) ? gl_current_array[i + 1]: 0)
+					  ((i > 1) ? current_array[i - 1] : 0) - (
+						  2 * current_array[i] - 
+						  ((i < iPerTask - 1) ? current_array[i + 1]: 0)
 					  )
-				  );*/
+				  );
 		  }
+		  /*current_array[max_i+1] = receive(right_neighbour);
+		  next_array[max_i] = 2 * current_array[max_i] - old_array[max_i]
+				  + SPATIAL_IMPACT * (
+					  ((max_i > 1) ? current_array[max_i - 1] : 0) - (
+						  2 * current_array[max_i] - 
+						  ((max_i < iPerTask - 1) ? current_array[max_i + 1]: 0)
+					  )
+				  ); 
+      send(right_neighbour, next_array[size])
+		  
+		  current_array[0] = receive(left_neighbour);
+		  next_array[1] = 2 * current_array[1] - old_array[1]
+				  - (2 * current_array[1] - current_array[2])
+				  ); 
+      send(left_neighbour, next_array[1])
+		  */
+		  
+		  
+		  // Rotate buffers
+			temp = old_array;
+			old_array = current_array;
+			current_array = next_array;
+			next_array = temp;
 		}
-    
+    //discard = receive(right_neighbour);
+    //discard = receive(left_neighbour);
 
     /* You should return a pointer to the array with the final results. */
     return current_array;
