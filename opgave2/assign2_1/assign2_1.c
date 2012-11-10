@@ -164,9 +164,11 @@ int main(int argc, char *argv[])
     timer_start();
 
     /* Call the actual simulation that should be implemented in simulate.c. */
-    ret = simulate(i_max, t_max, old, current, next, my_rank, num_tasks);
+    ret = simulate(iPerTask, t_max, old, current, next, my_rank, num_tasks);
 
     time = timer_end();
+    //TODO: Collect all the time and add together to get the total time.
+    //TODO: Put all the separate partwave arrays together.
     printf("Took %g seconds\n", time);
     printf("Normalized: %g seconds\n", time / (1. * i_max * t_max));
 
