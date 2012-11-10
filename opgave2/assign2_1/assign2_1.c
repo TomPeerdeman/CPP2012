@@ -52,6 +52,8 @@ int main(int argc, char *argv[])
     double *old, *current, *next, *ret;
     int t_max, i_max;
     double time;
+    int rc , num_tasks , my_rank;
+    int iPerTask;
 
     /* Parse commandline args */
     if (argc < 3) {
@@ -85,7 +87,6 @@ int main(int argc, char *argv[])
     }
     
     //Setting up MPI
-    int rc , num_tasks , my_rank;
     rc = MPI_Init (&argc, &argv);
 	if ( rc != MPI_SUCCESS ) { // Check for success
         fprintf ( stderr , " Unable to set up MPI ");
@@ -94,23 +95,45 @@ int main(int argc, char *argv[])
     MPI_Comm_size ( MPI_COMM_WORLD , &num_tasks ); // Determine number of tasks
     MPI_Comm_rank ( MPI_COMM_WORLD , &my_rank );
 
-    /* Allocate and initialize buffers. */
-    old = malloc(i_max * sizeof(double));
-    current = malloc(i_max * sizeof(double));
-    next = malloc(i_max * sizeof(double));
+    //amount of i each task should run
+    iPerTask = i_max/num_tasks;
+    
+    /* Allocate and initialize buffers, with only the size of i's per task
+     * that should be calculated. If a task is at the beginning or the end,
+     * only one halo cell is needed, else 2 halo cells are needed.
+     */
+    if(my_rank == 0 || my_rank == num_tasks-1){
+      old = malloc((iPerTask+1) * sizeof(double));
+      current = malloc((iPerTask+1) * sizeof(double));
+      next = malloc((iPerTask+1) * sizeof(double));
+    }
+    
+    else{
+      old = malloc((iPerTask+2) * sizeof(double));
+      current = malloc((iPerTask+2) * sizeof(double));
+      next = malloc((iPerTask+2) * sizeof(double));
+    }
 
     if (old == NULL || current == NULL || next == NULL) {
         fprintf(stderr, "Could not allocate enough memory, aborting.\n");
         return EXIT_FAILURE;
     }
 
-    memset(old, 0, i_max * sizeof(double));
-    memset(current, 0, i_max * sizeof(double));
-    memset(next, 0, i_max * sizeof(double));
+    if(my_rank == 0 || my_rank == num_tasks-1){
+      memset(old, 0, (iPerTask+1) * sizeof(double));
+      memset(current, 0, (iPerTask+1) * sizeof(double));
+      memset(next, 0, (iPerTask+1) * sizeof(double));
+    }
+    else{
+      memset(old, 0, (iPerTask+2) * sizeof(double));
+      memset(current, 0, (iPerTask+2) * sizeof(double));
+      memset(next, 0, (iPerTask+2) * sizeof(double));
+    }
 
     /* How should we will our first two generations? This is determined by the
      * optional further commandline arguments.
      * */
+     //TODO? change i_max here to iPerTask?
     if (argc > 3) {
         if (strcmp(argv[3], "sin") == 0) {
             fill(old, 1, i_max/4, 0, 2*3.14, sin);
