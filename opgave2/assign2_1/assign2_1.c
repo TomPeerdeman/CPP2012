@@ -19,8 +19,7 @@ typedef double (*func_t)(double x);
 /*
  * Simple gauss with mu=0, sigma^1=1
  */
-double gauss(double x)
-{
+double gauss(double x){
     return exp((-1 * x * x) / 2);
 }
 
@@ -35,8 +34,7 @@ double gauss(double x)
  * `sample_end'.
  */
 void fill(double *array, int offset, int range, double sample_start,
-        double sample_end, func_t f)
-{
+        double sample_end, func_t f){
     int i;
     float dx;
 
@@ -47,16 +45,16 @@ void fill(double *array, int offset, int range, double sample_start,
 }
 
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]){
 	double *old, *current, *next, *ret;
 	int rc , num_tasks , my_rank, nitems, t_max;
 	
-	//Setting up MPI
+	// Setting up MPI.
 	rc = MPI_Init(&argc, &argv);
-	if(rc != MPI_SUCCESS){ // Check for success
+	if(rc != MPI_SUCCESS){
 		fprintf(stderr, "Unable to set up MPI");
-		MPI_Abort(MPI_COMM_WORLD, rc); // Abort MPI runtime
+		// Abort MPI runtime.
+		MPI_Abort(MPI_COMM_WORLD, rc);
 	}
 	MPI_Comm_size(MPI_COMM_WORLD, &num_tasks);
 	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
@@ -65,6 +63,7 @@ int main(int argc, char *argv[])
 		int i_max, iPerTask;
 		int t, low, high;
 		double time;
+		double **startPtrs;
 		
 		/* Parse commandline args */
 		// TODO: fit to 80 char limit
@@ -102,19 +101,33 @@ int main(int argc, char *argv[])
 		
 		iPerTask = i_max / num_tasks;
 		
-		old = malloc(i_max * sizeof(double));
-		current = malloc(i_max * sizeof(double));
-		next = malloc(i_max * sizeof(double));
+		old = malloc((i_max + 1) * sizeof(double));
+		current = malloc((i_max + 1) * sizeof(double));
+		next = malloc((i_max + 1) * sizeof(double));
 		
-		if(old == NULL || current == NULL || next == NULL){
+		startPtrs = malloc(num_tasks * sizeof(double *));
+		
+		if(old == NULL || current == NULL || next == NULL || startPtrs == NULL){
 			fprintf(stderr, "Could not allocate enough memory, aborting.\n");
 			MPI_Abort(MPI_COMM_WORLD, 1);
 			return EXIT_FAILURE;
 		}
 		
-		memset(old, 0, i_max * sizeof(double));
-		memset(current, 0, i_max * sizeof(double));
-		memset(next, 0, i_max * sizeof(double));
+		memset(old, 0, (i_max + 1) * sizeof(double));
+		memset(current, 0, (i_max + 1) * sizeof(double));
+		memset(next, 0, (i_max + 1) * sizeof(double));
+		
+		memset(startPtrs, 0, num_tasks * sizeof(double *));
+		
+		double *startOld = old;
+		double *startCur = current;
+		
+		/* Make space for the left halo of the root task.
+		 * We will never use this halo, but it is there for simplifying
+		 * the simulate step.
+		 */
+		old++;
+		current++;
 		
 		/* 
 		 * How should we will our first two generations? This is determined by the
@@ -149,76 +162,97 @@ int main(int argc, char *argv[])
 			fill(current, 2, i_max/4, 0, 2*3.14, sin);
 		}
 		
-		double *startOld = old;
-		double *startCur = current;
+		printf("Task 0 gets %d items (0-%d)\n", iPerTask, iPerTask - 1);
+		startPtrs[0] = current;
 		
 		for(t = 1; t < num_tasks; t++){
 			low = t * iPerTask;
 			high = (t + 1) * iPerTask - 1;
 			if(t + 1 == num_tasks){
-				high = i_max;
+				high = i_max - 1;
 			}
 			nitems = high - low + 1;
 			
-			MPI_Send(&nitems, 1, MPI_INT, t, 7, MPI_COMM_WORLD);
-			MPI_Send(&t_max, 1, MPI_INT, t, 8, MPI_COMM_WORLD);
+			printf("Task %d gets %d items (%d-%d)\n", t, nitems, low, high);
+			
+			MPI_Send(&nitems, 1, MPI_INT, t, 6, MPI_COMM_WORLD);
+			MPI_Send(&t_max, 1, MPI_INT, t, 7, MPI_COMM_WORLD);
 			old += low;
 			current += low;
-			MPI_Send(old, nitems, MPI_DOUBLE, t, 9, MPI_COMM_WORLD);
+			startPtrs[t] = current;
+			MPI_Send(old, nitems, MPI_DOUBLE, t, 8, MPI_COMM_WORLD);
 			MPI_Send(current, nitems, MPI_DOUBLE, t, 9, MPI_COMM_WORLD);
 		}
 		
+		// Reset to original pointers.
 		old = startOld;
 		current = startCur;
 		
+		
 		nitems = iPerTask;
 		
-		ret = simulate(nitems, t_max, old, current, next, my_rank, num_tasks);
+		timer_start();
+		
+		current = simulate(nitems, t_max, old, current, next, my_rank, num_tasks);
 		
 		printf("Root node done\n");
 		
-		// TODO: Start simulate for root & time start
+		// Receive all data back
+		for(t = 1; t < num_tasks; t++){
+			current = startPtrs[t];
+			MPI_Recv(current, nitems + num_tasks, MPI_DOUBLE, t, 5,
+				MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		}
 		
-		// TODO: receive all data & time stop & write back
+		time = timer_end();
+		
+		printf("Took %g seconds\n", time);
+		printf("Normalized: %g seconds\n", time / (1. * i_max * t_max));
+
+		current = startPtrs[0];
+		
+		file_write_double_array("result.txt", current, i_max);
 	}else{
-		MPI_Status *status;
-		MPI_Recv(&nitems, 1, MPI_INT, 0, 7, MPI_COMM_WORLD, status);
-		MPI_Recv(&t_max, 1, MPI_INT, 0, 8, MPI_COMM_WORLD, status);
+		MPI_Status *status = MPI_STATUS_IGNORE;
 		
-		old = malloc(nitems * sizeof(double));
-		current = malloc(nitems * sizeof(double));
-		next = malloc(nitems * sizeof(double));
+		MPI_Recv(&nitems, 1, MPI_INT, 0, 6, MPI_COMM_WORLD, status);
+		MPI_Recv(&t_max, 1, MPI_INT, 0, 7, MPI_COMM_WORLD, status);
+		
+		old = malloc((nitems + 2) * sizeof(double));
+		current = malloc((nitems + 2) * sizeof(double));
+		next = malloc((nitems + 2) * sizeof(double));
 		
 		if(old == NULL || current == NULL || next == NULL){
 			fprintf(stderr, "Could not allocate enough memory, aborting.\n");
 			MPI_Abort(MPI_COMM_WORLD, 1);
 			return EXIT_FAILURE;
 		}
+
+		memset(old, 0, (nitems + 2) * sizeof(double));
+		memset(current, 0, (nitems + 2) * sizeof(double));
+		memset(next, 0, (nitems + 2) * sizeof(double));
 		
-		memset(old, 0, nitems * sizeof(double));
-		memset(current, 0, nitems * sizeof(double));
-		memset(next, 0, nitems * sizeof(double));
+		// Start putting data at offset 1, increase pointers for this.
+		old++;
+		current++;
+		
+		MPI_Recv(old, nitems, MPI_DOUBLE, 0, 8, MPI_COMM_WORLD, status);
+		MPI_Recv(current, nitems, MPI_DOUBLE, 0, 9, MPI_COMM_WORLD, status);
+		
+		// Reset original pointers.
+		old--;
+		current--;
 		
 		ret = simulate(nitems, t_max, old, current, next, my_rank, num_tasks);
 		
 		printf("Node %d of %d done\n", my_rank, num_tasks);
 		
-		// TODO: write back result
+		// Increase pointer to ignore halo.
+		ret++;
+		
+		// Send back calculated data.
+		MPI_Send(ret, nitems, MPI_DOUBLE, 0, 5, MPI_COMM_WORLD);
 	}
-	
-	
-    //~ timer_start();
-
-    /* Call the actual simulation that should be implemented in simulate.c. */
-    //~ ret = simulate(iPerTask, t_max, old, current, next, my_rank, num_tasks);
-
-    //~ time = timer_end();
-    //~ //TODO: Collect all the time and add together to get the total time.
-    //~ //TODO: Put all the separate partwave arrays together.
-    //~ printf("Took %g seconds\n", time);
-    //~ printf("Normalized: %g seconds\n", time / (1. * i_max * t_max));
-
-    //~ file_write_double_array("result.txt", ret, i_max);
 
 	free(old);
 	free(current);
