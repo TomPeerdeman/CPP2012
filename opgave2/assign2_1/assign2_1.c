@@ -93,7 +93,7 @@ int main(int argc, char *argv[]){
 			MPI_Abort(MPI_COMM_WORLD, 1);
 			return EXIT_FAILURE;
 		}
-		if (t_max < 1) {
+		if (t_max < 0) {
 			printf("argument error: t_max should be >=1.\n");
 			MPI_Abort(MPI_COMM_WORLD, 1);
 			return EXIT_FAILURE;

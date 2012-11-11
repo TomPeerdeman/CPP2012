@@ -77,7 +77,7 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
 
 			MPI_Send(&next_array[max_i], 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD);
 		}else{
-			calculate(old_array, current_array, next_array, max_i);
+			next_array[max_i] = 0.0;
 		}
   		
 		//Send only if left exists.
@@ -88,7 +88,7 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
 			
 			MPI_Send(&next_array[min_i], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD);
 		}else{
-			calculate(old_array, current_array, next_array, min_i);	
+			next_array[min_i] = 0.0;	
 		}			
 		
 		// Rotate buffers
