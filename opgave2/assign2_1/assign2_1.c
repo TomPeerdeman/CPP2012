@@ -129,6 +129,8 @@ int main(int argc, char *argv[]){
 		old++;
 		current++;
 		
+		printf("Ptr compare: %p - %p  %x\n", (void *) old, (void *) startOld, sizeof(double));
+		
 		/* 
 		 * How should we will our first two generations? This is determined by the
 		 * optional further commandline arguments.
@@ -163,9 +165,12 @@ int main(int argc, char *argv[]){
 		}
 		
 		printf("Task 0 gets %d items (0-%d)\n", iPerTask, iPerTask - 1);
+		printf("Task %d start %lf-%lf\n", t, startCur[1], startCur[200]);
 		startPtrs[0] = current;
 		
 		for(t = 1; t < num_tasks; t++){
+			// TODO: Better distrubution of i's, the last one can get much more
+			// i's than the rest
 			low = t * iPerTask;
 			high = (t + 1) * iPerTask - 1;
 			if(t + 1 == num_tasks){
@@ -174,12 +179,16 @@ int main(int argc, char *argv[]){
 			nitems = high - low + 1;
 			
 			printf("Task %d gets %d items (%d-%d)\n", t, nitems, low, high);
+			printf("Task %d start %lf-%lf\n", t, startCur[low+1], startCur[high + 1]);
 			
 			MPI_Send(&nitems, 1, MPI_INT, t, 6, MPI_COMM_WORLD);
 			MPI_Send(&t_max, 1, MPI_INT, t, 7, MPI_COMM_WORLD);
-			old += low;
-			current += low;
+			
+			old = startPtrs[0] + low;
+			current = startPtrs[0] + low;
+			
 			startPtrs[t] = current;
+			
 			MPI_Send(old, nitems, MPI_DOUBLE, t, 8, MPI_COMM_WORLD);
 			MPI_Send(current, nitems, MPI_DOUBLE, t, 9, MPI_COMM_WORLD);
 		}
@@ -193,15 +202,34 @@ int main(int argc, char *argv[]){
 		
 		timer_start();
 		
+		printf("Root prepre ptr %p\n", (void *) current);
+		
 		current = simulate(nitems, t_max, old, current, next, my_rank, num_tasks);
 		
 		printf("Root node done\n");
+		
+		printf("Root pre ptr %p\n", (void *) current);
+		int i;
+		if(my_rank == 0){
+			for(i = 0; i < 10; i++){
+				printf("Root-pre [%d] %lf\n", i, current[i]);
+			}
+		}
 		
 		// Receive all data back
 		for(t = 1; t < num_tasks; t++){
 			current = startPtrs[t];
 			MPI_Recv(current, nitems + num_tasks, MPI_DOUBLE, t, 5,
 				MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+		}
+		
+		current = startCur;
+		printf("Root post ptr %p\n", (void *) current);
+		
+		if(my_rank == 0){
+			for(i = 0; i < 10; i++){
+				printf("Root-post [%d] %lf\n", i, current[i]);
+			}
 		}
 		
 		time = timer_end();
@@ -211,7 +239,18 @@ int main(int argc, char *argv[]){
 
 		current = startPtrs[0];
 		
+		if(my_rank == 0){
+			for(i = 0; i < 10; i++){
+				printf("Root-postpost [%d] %lf\n", i, current[i]);
+			}
+		}
+		
+		printf("Root low: %lf\n", current[0]);
+		
 		file_write_double_array("result.txt", current, i_max);
+		
+		old = startOld;
+		current = startCur;
 	}else{
 		MPI_Status *status = MPI_STATUS_IGNORE;
 		
