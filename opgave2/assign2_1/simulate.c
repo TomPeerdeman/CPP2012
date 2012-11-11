@@ -53,7 +53,6 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
 	// De return array heeft dezelfde vorm als de input arrays.
     
     printf("This is my rank: %d out of %d tasks\n", my_rank, num_tasks);
-	printf("[%d] I'm starting at %lf-%lf\n", my_rank, current_array[min_i], current_array[max_i]);
     
     //Send only if left exists.
     if(my_rank != 0){
@@ -77,16 +76,20 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
 			calculate(old_array, current_array, next_array, max_i);
 
 			MPI_Send(&next_array[max_i], 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD);
+		}else{
+			calculate(old_array, current_array, next_array, max_i);
 		}
   		
 		//Send only if left exists.
 		if(my_rank != 0){
 			MPI_Recv(&current_array[min_i-1], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD, &status);
 
-			calculate(old_array, current_array, next_array, min_i);
+			calculate(old_array, current_array, next_array, min_i);	
 			
 			MPI_Send(&next_array[min_i], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD);
-		}	  
+		}else{
+			calculate(old_array, current_array, next_array, min_i);	
+		}			
 		
 		// Rotate buffers
 		temp = old_array;
@@ -101,14 +104,7 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
     if(my_rank != 0){
 		MPI_Recv(&discard, 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD, &status);
     }
-    
-	if(my_rank == 0){
-		for(i = min_i; i < 10; i++){
-			printf("Root [%d] %lf\n", i, current_array[i]);
-		}
-	}
 	
-	printf("Task %d done, cur low: %lf\n", my_rank, current_array[min_i]);
     /* You should return a pointer to the array with the final results. */
     return current_array;
 }
