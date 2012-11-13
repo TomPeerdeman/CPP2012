@@ -66,7 +66,6 @@ int main(int argc, char *argv[]){
     int *startPtrs;
     
     /* Parse commandline args */
-    // TODO: fit to 80 char limit
     if (argc < 3) {
       printf("Usage: %s i_max t_max num_threads [initial_data]\n", argv[0]);
       printf(" - i_max: number of discrete amplitude points, should be >2\n");
@@ -93,7 +92,7 @@ int main(int argc, char *argv[]){
       MPI_Abort(MPI_COMM_WORLD, 1);
       return EXIT_FAILURE;
     }
-    if (t_max < 0) {
+    if (t_max < 1) {
       printf("argument error: t_max should be >=1.\n");
       MPI_Abort(MPI_COMM_WORLD, 1);
       return EXIT_FAILURE;
@@ -129,8 +128,6 @@ int main(int argc, char *argv[]){
     old++;
     current++;
     
-    printf("Ptr compare: %p - %p  %x\n", (void *) old, (void *) startOld, sizeof(double));
-    
     /* 
      * How should we will our first two generations? This is determined by the
      * optional further commandline arguments.
@@ -165,8 +162,6 @@ int main(int argc, char *argv[]){
     }
     
     for(t = 1; t < num_tasks; t++){
-      // TODO: Better distrubution of i's, the last one can get much more
-      // i's than the rest
       low = t * iPerTask;
       high = (t + 1) * iPerTask - 1;
       if(t + 1 == num_tasks){
