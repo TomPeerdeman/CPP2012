@@ -18,9 +18,9 @@
 
 /* Add any functions you may need (like a worker) here. */
 void calculate(double *old, double *cur, double *next, int i){
-	next[i] = 2.0 * cur[i] - old[i] + SPATIAL_IMPACT * (
-			(cur[i - 1] - (2.0 * cur[i] - cur[i + 1]))
-		);
+  next[i] = 2.0 * cur[i] - old[i] + SPATIAL_IMPACT * (
+      (cur[i - 1] - (2.0 * cur[i] - cur[i + 1]))
+    );
 }
 
 /*
@@ -44,67 +44,65 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
     MPI_Status status;
     
     //initialize i domains, considering halo cells
-	min_i = 1;
-	max_i = iPerTask;
-	
-	// Alle nodes (ook de root) krijgen arrays met iPerTaksk + 2 elementen.
-	// Voor alle nodes begint de data op 1, het laatste data element staat op
-	// index iPerTask.
-	// De return array heeft dezelfde vorm als de input arrays.
-    
-    printf("This is my rank: %d out of %d tasks\n", my_rank, num_tasks);
-    
+    min_i = 1;
+    max_i = iPerTask;
+  
+  // Alle nodes (ook de root) krijgen arrays met iPerTaksk + 2 elementen.
+  // Voor alle nodes begint de data op 1, het laatste data element staat op
+  // index iPerTask.
+  // De return array heeft dezelfde vorm als de input arrays.
+        
     //Send only if left exists.
     if(my_rank != 0){
-		MPI_Send(&current_array[min_i], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD);    
+      MPI_Send(&current_array[min_i], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD);    
     }
     
     //Send only if right exists.
     if(my_rank != num_tasks-1){
-		MPI_Send(&current_array[max_i], 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD);
+      MPI_Send(&current_array[max_i], 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD);
     }
-    
-    for(t = 0; t < t_max; t++){		
-		// Calculate Ai_min, t up to and including Ai_max, t here
-		for(i = min_i + 1; i < max_i; i++){
-			calculate(old_array, current_array, next_array, i);
-		}
-		
-		if(my_rank != num_tasks-1){
-			MPI_Recv(&current_array[max_i+1], 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD, &status);
-
-			calculate(old_array, current_array, next_array, max_i);
-
-			MPI_Send(&next_array[max_i], 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD);
-		}else{
-			next_array[max_i] = 0.0;
-		}
-  		
-		//Send only if left exists.
-		if(my_rank != 0){
-			MPI_Recv(&current_array[min_i-1], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD, &status);
-
-			calculate(old_array, current_array, next_array, min_i);	
-			
-			MPI_Send(&next_array[min_i], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD);
-		}else{
-			next_array[min_i] = 0.0;	
-		}			
-		
-		// Rotate buffers
-		temp = old_array;
-		old_array = current_array;
-		current_array = next_array;
-		next_array = temp;
-	}
+  
+    for(t = 0; t < t_max; t++){    
+    // Calculate Ai_min, t up to and including Ai_max, t here
+    for(i = min_i + 1; i < max_i; i++){
+      calculate(old_array, current_array, next_array, i);
+    }
     
     if(my_rank != num_tasks-1){
-		MPI_Recv(&discard, 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD, &status);
+      MPI_Recv(&current_array[max_i+1], 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD, &status);
+
+      calculate(old_array, current_array, next_array, max_i);
+
+      MPI_Send(&next_array[max_i], 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD);
+    }else{
+      next_array[max_i] = 0.0;
+    }
+      
+    //Send only if left exists.
+    if(my_rank != 0){
+      MPI_Recv(&current_array[min_i-1], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD, &status);
+
+      calculate(old_array, current_array, next_array, min_i);  
+      
+      MPI_Send(&next_array[min_i], 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD);
+    }else{
+      next_array[min_i] = 0.0;  
+    }      
+    
+    // Rotate buffers
+    temp = old_array;
+    old_array = current_array;
+    current_array = next_array;
+    next_array = temp;
+  }
+    
+    if(my_rank != num_tasks-1){
+      MPI_Recv(&discard, 1, MPI_DOUBLE, my_rank+1, 1, MPI_COMM_WORLD, &status);
     }
     if(my_rank != 0){
-		MPI_Recv(&discard, 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD, &status);
+      MPI_Recv(&discard, 1, MPI_DOUBLE, my_rank-1, 1, MPI_COMM_WORLD, &status);
     }
-	
+  
     /* You should return a pointer to the array with the final results. */
     return current_array;
 }
