@@ -1,0 +1,96 @@
+\documentclass[a4paper]{article}
+\usepackage{fancyhdr}
+\usepackage[usenames, dvipsnames]{xcolor}
+\usepackage{graphicx,hyperref,amsmath,float,subfigure,soul}
+\usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry}
+\hypersetup{
+	colorlinks,
+	citecolor=black,
+	filecolor=black,
+	linkcolor=black,
+	urlcolor=black
+}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\pagestyle{fancy}
+\lfoot{\small \color{gray}Tom Peerdeman - 10266186}
+\cfoot{\thepage}
+\rfoot{\small \color{gray}Ren\'e Aparicio Sa\'ez - 10214054}
+\lhead{\small \color{gray} MPI}
+\begin{document}
+	\begin{titlepage}
+	\begin{center}
+		\textsc{\Large Concurrency \& Parallel Programming}\\[0.5cm]
+		\HRule \\[0,4cm]
+		\textsc{\huge \bfseries MPI}
+		\HRule \\[8cm]
+		\begin{minipage}{0.4\textwidth}
+			\begin{flushleft}\large
+				\emph{Auteurs: Tom Peerdeman \& Ren\'e Aparicio Saez}\\
+			\end{flushleft}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
+			\begin{flushright}\large
+			\emph{Datum: 09-11-2012\\\hspace{1cm}}\\
+			\end{flushright}
+		\end{minipage}
+	\end{center}
+	\end{titlepage}
+
+  \section{Assignment 2.1 - Wave simulation}
+  \subsection{Table with results}
+    Tests on DAS4 are run for i = 1.000.000 and t = 1.000.
+    Measurements are done with 8 nodes and 1 process on each node. 1 node with
+    8 processes on the node. And finally 8 nodes with 8 processes each.
+    Each measurement is run 12 times. 
+    The highest value and the lowest value are disregarded. \\\\
+    \begin{tabular}{| p{0.33\textwidth} | p{0.33\textwidth} | p{0.33\textwidth} |}
+      \hline
+      \multicolumn{1}{|c}{i = 1,000,000} & \multicolumn{1}{c}{} & \multicolumn{1}{c|}{t = 1,000}\\
+      \hline
+      1 node with 8 processes & 8 nodes with 1 proces each & 8 nodes with 8 processes each\\
+      \hline
+      \st{1.72071} & 0.499236 & 0.119181\\
+      \hline
+      1.22258 & 0.495219 & \st{0.116725}\\
+      \hline
+      1.38375 & \st{0.495014} & 0.119682\\
+      \hline
+      0.851386 & 0.49582 & 0.121414\\
+      \hline
+      0.932281 & 0.495152 & 0.119064\\
+      \hline
+      1.02867 & 0.495158 & 0.119373\\
+      \hline
+      1.31722 & 0.49516 & 0.119355\\
+      \hline
+      1.39341 & 0.495073 & 0.121163\\
+      \hline
+      1.16325 & \st{0.499252} & 0.1189\\
+      \hline
+      \st{0.696113} & 0.495062 & 0.120271\\
+      \hline
+      1.40915 & 0.495312 & 0.123\\
+      \hline
+      1.16556 & 0.495146 & \st{0.12473}\\
+      \hline
+      \multicolumn{3}{|l|}{Average of the remaining 10:}\\
+      \hline
+      1.1867257 & 0.4956338 & 0.1201403\\
+      \hline
+    \end{tabular}\\\\
+    If the results using MPI are compared to results using pThreads we can see
+    clearly that MPI is quicker when more nodes are used (and a same amount
+    of cores as with pThreads).\\\\
+    \begin{tabular}{| p{0.33\textwidth} | p{0.33\textwidth} | p{0.33\textwidth} |}
+      \hline
+      \multicolumn{3}{|c|}{Average with a total of 8 processes}\\
+      \hline
+      1 node, 8 processes & 8 nodes, 1 process each & 8 pThreads \\
+      \hline
+      1.1867257 & 0.4956338 & 0.6777506\\
+      \hline
+    \end{tabular}
+    
+    
+    
+\end{document}
