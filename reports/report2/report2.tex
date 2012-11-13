@@ -43,7 +43,7 @@
     8 processes on the node. And finally 8 nodes with 8 processes each.
     Each measurement is run 12 times. 
     The highest value and the lowest value are disregarded. \\\\
-    \begin{tabular}{| p{0.33\textwidth} | p{0.33\textwidth} | p{0.33\textwidth} |}
+    \begin{tabular}{| p{0.306\textwidth} | p{0.306\textwidth} | p{0.306\textwidth} |}
       \hline
       \multicolumn{1}{|c}{i = 1,000,000} & \multicolumn{1}{c}{} & \multicolumn{1}{c|}{t = 1,000}\\
       \hline
@@ -77,11 +77,16 @@
       \hline
       1.1867257 & 0.4956338 & 0.1201403\\
       \hline
-    \end{tabular}\\\\
+    \end{tabular}
+    \subsection{Comparison to pThreads}
     If the results using MPI are compared to results using pThreads we can see
     clearly that MPI is quicker when more nodes are used (and a same amount
-    of cores as with pThreads).\\\\
-    \begin{tabular}{| p{0.33\textwidth} | p{0.33\textwidth} | p{0.33\textwidth} |}
+    of cores as with pThreads), as seen in the table below.
+    This is the best possible
+    comparison, because both methods use 8 cores to calculate the wave.
+    The only big difference,
+    besides the difference in MPI and pthreads, is that the MPI method makes use of more then 1 node. We can conclude that MPI shows more potential to get better speed results then pThreads.\\\\
+    \begin{tabular}{| p{0.306\textwidth} | p{0.306\textwidth} | p{0.306\textwidth} |}
       \hline
       \multicolumn{3}{|c|}{Average with a total of 8 processes}\\
       \hline
