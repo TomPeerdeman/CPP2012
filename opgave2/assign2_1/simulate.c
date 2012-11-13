@@ -47,10 +47,11 @@ double *simulate(const int iPerTask, const int t_max, double *old_array,
     min_i = 1;
     max_i = iPerTask;
   
-  // Alle nodes (ook de root) krijgen arrays met iPerTaksk + 2 elementen.
-  // Voor alle nodes begint de data op 1, het laatste data element staat op
-  // index iPerTask.
-  // De return array heeft dezelfde vorm als de input arrays.
+    /*
+     * ALL nodes are assigned arrays of length iPerTask + 2 elements.
+     * For all nodes the data starts at 1, the last element of data is at index
+     * iPerTask. The return array looks the same as the input array.
+     */
         
     //Send only if left exists.
     if(my_rank != 0){
