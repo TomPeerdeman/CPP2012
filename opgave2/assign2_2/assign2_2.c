@@ -10,7 +10,7 @@ int main(int argc, char **argv){
 
 	rc = MPI_Init(&argc, &argv);
 	if(rc != MPI_SUCCESS){
-		fprintf(stderr, "Unable to set up MPI");
+		fprintf(stderr, "Unable to set up MPI\n");
 		// Abort MPI runtime.
 		MPI_Abort(MPI_COMM_WORLD, rc);
 	}
@@ -18,17 +18,20 @@ int main(int argc, char **argv){
 	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 	
 	if(argc < 2){
-		printf("No root node given.");
-		MPI_Abort(MPI_COMM_WORLD, rc);
+		printf("No root node given.\n");
+		MPI_Abort(MPI_COMM_WORLD, 1);
 	}
 	
 	if(argc < 3){
-		printf("No message given.");
-		MPI_Abort(MPI_COMM_WORLD, rc);
+		printf("No message given.\n");
+		MPI_Abort(MPI_COMM_WORLD, 1);
 	}
 	
-	// TODO: check error
 	rootnode = atoi(argv[1]);
+	if(rootnode < 0 || rootnode > num_tasks -1){
+		printf("Invalid root node.\n");
+		MPI_Abort(MPI_COMM_WORLD, 1);
+	}
 	
 	if(my_rank != rootnode){
 		char *ptr = malloc(100 * sizeof(char));
