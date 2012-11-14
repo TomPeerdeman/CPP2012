@@ -1,4 +1,3 @@
-// TODO: remove printf's
 #include <stdio.h>
 
 #include "mpi.h"
