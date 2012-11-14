@@ -18,7 +18,6 @@ int MYMPI_Bcast(void *buffer, int count, MPI_Datatype datatype, int root,
   if(my_rank == root){
     broadcast_counter++;
     tag = broadcast_counter;
-    printf("Send tag %d from %d\n", tag, my_rank);
   
     // ring structure, last rank connects to first rank and vice versa
     if(root != num_tasks-1)
@@ -40,7 +39,6 @@ int MYMPI_Bcast(void *buffer, int count, MPI_Datatype datatype, int root,
       communicator, &status);
     int sender = status.MPI_SOURCE;
     tag = status.MPI_TAG;
-    printf("%d received tag %d from %d\n", my_rank, tag, sender);
     int send_to;
     
     // Only resend if i didn't received it already.
@@ -53,7 +51,6 @@ int MYMPI_Bcast(void *buffer, int count, MPI_Datatype datatype, int root,
       }else{
         send_to = (sender - 2 + num_tasks) % num_tasks;
       }
-      printf("%d resend tag %d to %d\n", my_rank, tag, send_to);
       MPI_Send(buffer, count, datatype, send_to, tag, communicator);
     }
   }

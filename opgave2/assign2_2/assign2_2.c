@@ -37,11 +37,9 @@ int main(int argc, char **argv){
     char *ptr = malloc(100 * sizeof(char));
     // Recieve broadcast
     MYMPI_Bcast(ptr, 100, MPI_CHAR, rootnode, MPI_COMM_WORLD);
-    printf("%d received: %s\n", my_rank, ptr);
     free(ptr);
   }else{
     // Send broadcast
-    printf("%d sending %s\n", my_rank, argv[2]);
     MYMPI_Bcast(argv[2], strlen(argv[2]) + 1, MPI_CHAR, rootnode,
       MPI_COMM_WORLD);
   }
