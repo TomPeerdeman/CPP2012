@@ -2,9 +2,9 @@ PROGNAME = assign2_2
 SRCFILES = assign2_2.c broadcast.c
 TARNAME = assign2_2.tgz
 
-RUNARGS = 
+RUNARGS = 0 hallo
 NODES = 1 # How many DAS4 nodes
-PROCESSESPERNODE = 1 # How many processes to spawn on one machine.
+PROCESSESPERNODE = 8 # How many processes to spawn on one machine.
 
 PRUNARGS = -v -np $(NODES) -$(PROCESSESPERNODE) \
 		   -sge-script $$PRUN_ETC/prun-openmpi
