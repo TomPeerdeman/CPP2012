@@ -38,12 +38,15 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
     for(t = 0;t < t_max; t++)
     {
         # pragma omp parallel for private(i)
-        for(i = 0; i < i_max; i++)
+        for(i = 1; i < i_max-1; i++)
         {          
             next_array[i] = 2.0 * current_array[i] - old_array[i] +
             SPATIAL_IMPACT * ((current_array[i - 1] -
              (2.0 * current_array[i] - current_array[i + 1])));
         }
+        next_array[0] = 0;
+        next_array[i_max-1] = 0;
+        
         temp = old_array;
         old_array = current_array;
         current_array = next_array;
