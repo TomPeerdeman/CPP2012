@@ -38,13 +38,13 @@
 
   \section{Assignment 1.1 - Wave simulation}
   \subsection{Table with results}
-    Tests on DAS4 are run for i = 1.000.000 and t = 1.000.
+    Tests on DAS4 are run for i\_max = 1.000.000 and t\_max = 1.000.
     The amount of omp threads used to generate the waves is increased
     to measure the difference in speed for the program.
     Each amount of threads is run 12 times. 
     The highest value and the lowest value are disregarded. 
     The remaining data is used to plot a graph.
-    These tests are done without considering scheduling,
+    These tests are done without specifying scheduling,
     this is done later in the report.\\\\
     \begin{tabular}{| c | c | c | c | c | c | c | c |}
       \hline
@@ -84,8 +84,47 @@
     \end{center}
     Apparantly the performance is better if an even number of threads is used.
   \newpage
+  \subsection{Comparison between schedulers}
+    OpenMP has three different types of schedulers.
+    Below are the results of the different
+    schedulers to calculate the wave equations. 
+    If no scheduler is specified, static is the standard scheduler.
+    Just in case, new tests are run specifying static as scheduler.
+    The tests where run using i\_max = 1,000,000 and t\_max = 1,000.\\
+    \begin{center}
+      \begin{tabular}{| c | c | c |}
+      \hline
+      guided, 1 & dynamic, $\frac{i\_max}{num\_threads}$ & static, $\frac{i\_max}{num\_threads}$\\
+      \hline
+      1.34428 & 1.29205 & 0.639236\\
+      \hline
+      1.33937 & 1.34629 & 0.652469\\
+      \hline
+      1.35234 & 1.32758 & 0.646157\\
+      \hline
+      1.33636 & 1.2953 & 0.638384\\
+      \hline
+      1.30415 & 1.33798 & 0.681617\\
+      \hline
+      1.3897 & 1.34237 & 0.69578\\
+      \hline
+      1.37503 & 1.20245 & 0.650952\\
+      \hline
+      1.33084 & 1.24136 & 0.685962\\
+      \hline
+      \multicolumn{3}{|c|}{Average}\\
+      \hline
+      1.35120375 & 1.31465 & 0.661319625\\
+      \hline
+      \end{tabular}
+    \end{center}
+    Tests using the guided scheduler but with a bigger smallest chunk resulted
+    in slower preformance or equal preformance. The best scheduler for this equation
+    is static.
+    
+    
   \subsection{Comparison to normal pThreads}
-    When comparing the results, it becomes clear that OMP is faster then the usual pThread parallelisation method. The tests where done with normal scheduling\\
+    When comparing the results, it becomes clear that OMP (without any specified scheduler) is faster then the usual pThread parallelisation method.\\
     \begin{tabular}{| l | c | c | c | c | c | c | c | c |}
       \hline
       \multicolumn{9}{|l|}{Average of 10 runs:}\\
