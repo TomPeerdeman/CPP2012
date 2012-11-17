@@ -75,7 +75,7 @@ int main(void) {
 	     nx, ny);
 	
 	time = timer_end();
-    printf("Took %g seconds\n", time);
+    fprintf(stderr, "Took %g seconds\n", time);
     return 0;
 }
 
