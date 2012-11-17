@@ -32,23 +32,31 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
      * Your implementation should go here.
      */
     omp_set_num_threads(num_threads);
+    
+    double *temp;
     int t, i;
-    int iPerThread = i_max/num_threads;
-
+    int x = 0;
     for(t = 0;t < t_max; t++)
     {
-        # pragma omp parallel for private(i) firstprivate(iPerThread)
-        for(i = omp_get_thread_num()*iPerThread;
-            i <= (omp_get_thread_num()+1)*iPerThread; i++)
+        # pragma omp parallel private(i) firstprivate(x)
         {
-			      next_array[i] = 2 * current_array[i] - old_array[i]
-				    + SPATIAL_IMPACT * (
-					    ((i > 1) ? current_array[i - 1] : 0) - (
-						    2 * current_array[i] - 
-						    ((i < i_max - 1) ? current_array[i + 1]: 0)
-					    )
-				    );
-		    }
+            for(i = 0; i < i_max; i++)
+            {
+              if(x==0)
+                printf("%d,%d\n",i,omp_get_thread_num());
+              x = 1;
+                next_array[i] = 2.0 * current_array[i] - old_array[i] + SPATIAL_IMPACT * (
+                    (current_array[i - 1] - (2.0 * current_array[i] - current_array[i + 1]))
+                  );
+		        }
+		        # pragma omp critical
+		        {
+                temp = old_array;
+                old_array = current_array;
+                current_array = next_array;
+                next_array = temp;
+            }
+        }
     }
     return current_array;
 }
