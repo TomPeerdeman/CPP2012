@@ -9,7 +9,7 @@ CC = gcc
 
 WARNFLAGS = -Wall -Werror-implicit-function-declaration -Wshadow \
 		  -Wstrict-prototypes -pedantic-errors
-CFLAGS = -std=c99 -ggdb -O2 $(WARNFLAGS) -D_POSIX_C_SOURCE=200112 -fopenmp
+CFLAGS = -std=c99 -ggdb $(WARNFLAGS) -D_POSIX_C_SOURCE=200112 -fopenmp -O2
 LFLAGS = -lm -lrt
 
 # Do some substitution to get a list of .o files from the given .c files.
@@ -26,7 +26,7 @@ $(PROGNAME): $(OBJFILES)
 	$(CC) -c $(CFLAGS) -o $@ $<
 
 run: $(PROGNAME)
-	prun -v -np 1 $(PROGNAME) $(RUNARGS)
+	prun -v -np 1 $(PROGNAME) $(RUNARGS) > output
 
 runlocal: $(PROGNAME)
 	./$(PROGNAME) $(RUNARGS) > output

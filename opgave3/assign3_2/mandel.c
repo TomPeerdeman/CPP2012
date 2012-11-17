@@ -45,13 +45,14 @@ int main(void) {
     nx = 0;
     ny = 0;
     for (cx = xMin; cx < xMax; cx += dxy) {
-        nx++;
+		nx++;
+		
     }
     for (cy = yMin; cy < yMax; cy += dxy) {
         ny++;
     }
 	
-	buf = malloc(nx * sizeof(unsigned char));
+	buf = malloc(ny * nx * sizeof(unsigned char));
 	if(buf == NULL){
 		fprintf(stderr, "Could not allocate enough memory, aborting.\n");
 		return 1;
@@ -65,24 +66,29 @@ int main(void) {
     // before the magnitude of z exceeds 2, or UCHAR_MAX, whichever is
     // smaller.
 
-    for (cy = yMin; cy < yMax; cy += dxy) {
-		#pragma omp parallel for private(cx, i, zx, zy)
-        for (i = 0; i < nx; i++) {
-			cx = i * dxy + xMin;
+	int j, idx, n;
+	//#pragma omp parallel for private(cy, cx, i, j, zx, zy, n)
+    for (i = 0; i < ny; i++) {
+		cy = i * dxy + yMin;
+		
+        for (j = 0; j < nx; j++) {
+			idx = ny * i + j;
+			cx = j * dxy + xMin;
             zx = 0.0; 
             zy = 0.0; 
-            buf[i] = 0;
-            while ((zx*zx + zy*zy < 4.0) && (buf[i] != UCHAR_MAX)) {
+            n = 0;
+            while ((zx*zx + zy*zy < 4.0) && (n != UCHAR_MAX)) {
                 new_zx = zx*zx - zy*zy + cx;
                 zy = 2.0*zx*zy + cy;
 				zx = new_zx;
-				buf[i]++;
+				n++;
             }
+			buf[idx] = n;
         }
-		// Write doesn't exists?
-		//write (1, &n, sizeof(n)); // Write the result to stdout
-		fwrite(buf, sizeof(unsigned char), nx, stdout);
     }
+	
+	// Write the result to stdout
+	fwrite(buf, sizeof(unsigned char), nx * ny, stdout);
 
 	free(buf);
 
