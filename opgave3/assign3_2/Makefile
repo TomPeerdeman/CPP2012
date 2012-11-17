@@ -31,8 +31,6 @@ run: $(PROGNAME)
 runlocal: $(PROGNAME)
 	./$(PROGNAME) $(RUNARGS) > output
 	
-output: runlocal
-	
 out.jpg: output
 	convert -depth 8 -size 501x400 gray:output out.jpg
 
