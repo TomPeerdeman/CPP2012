@@ -33,13 +33,15 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
      */
     omp_set_num_threads(num_threads);
     int t, i;
-    
-    # pragma omp parallel for private(t)
+    int iPerThread = i_max/num_threads;
+
     for(t = 0;t < t_max; t++)
     {
-        for(i = range->i_min; i <= range->i_max; i++)
+        # pragma omp parallel for private(i) firstprivate(iPerThread)
+        for(i = omp_get_thread_num()*iPerThread;
+            i <= (omp_get_thread_num()+1)*iPerThread; i++)
         {
-			    next_array[i] = 2 * current_array[i] - old_array[i]
+			      next_array[i] = 2 * current_array[i] - old_array[i]
 				    + SPATIAL_IMPACT * (
 					    ((i > 1) ? current_array[i - 1] : 0) - (
 						    2 * current_array[i] - 
@@ -48,6 +50,5 @@ double *simulate(const int i_max, const int t_max, const int num_threads,
 				    );
 		    }
     }
-
     return current_array;
 }
