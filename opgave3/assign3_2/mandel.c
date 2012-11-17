@@ -23,10 +23,14 @@ const double dxy = 0.005;
 #include <stdio.h>
 #include <limits.h>
 
-int main(void) {
+#include "timer.h"
 
+int main(void) {
+	timer_start();
+	
     double cx, cy;
     double zx, zy, new_zx;
+	double time;
     unsigned char n;
     int nx, ny;
 
@@ -49,7 +53,9 @@ int main(void) {
 	        zx = new_zx;
 	        n++;
             }
-            write (1, &n, sizeof(n)); // Write the result to stdout
+			// Write doesn't exists?
+            //write (1, &n, sizeof(n)); // Write the result to stdout
+            fwrite (&n, sizeof(n), 1, stdout); // Write the result to stdout
         }
     }
 
@@ -67,6 +73,9 @@ int main(void) {
 
     fprintf (stderr, "To process the image: convert -depth 8 -size %dx%d gray:output out.jpg\n",
 	     nx, ny);
+	
+	time = timer_end();
+    printf("Took %g seconds\n", time);
     return 0;
 }
 
