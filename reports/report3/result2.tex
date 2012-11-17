@@ -1,0 +1,72 @@
+\documentclass[a4paper]{article}
+
+\usepackage{fancyhdr}
+\usepackage[usenames, dvipsnames]{xcolor}
+\usepackage{graphicx,hyperref,amsmath,float,subfigure,soul}
+\usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry}
+
+\begin{document}
+
+\section{Finding a suitable resolution}
+	For comparing different code approaches a good resolution is needed.
+	If a low resolution is chosen, so that dyx is low, the program will finish very quick.
+	If we want to make a comparison this wont work very well.
+	The difference in results based on the change of code will be overwhelmed by the difference in results due to changes in cpu-load.
+	A too high resolution is also unwanted, for a good comparison multiple runs are required.
+	If the program takes too long too finish less runs can be done.
+	The resolution is experimentally found.
+	Starting at 0.005 we found that the program run times were just too low.
+	Eventually we settled at a value of 0.002, with this resolution running on normal computers a good difference could be seen.
+	However when we ran the program at das4 the multiple cores kicked in, so we had to lower the resolution to 0.001 to be in the clear.
+	
+
+\section{Work schedulers}
+	The mandelbrot application isn't an application with a fixed amount of instructions in each loop.
+	In the loop a while statement sits, which runs a couple of times depending on the data.
+	So if each thread get a fixed amount of points to process some threads will get points that exit the while loop quickly, while a other thread can get points that take a long time to exit the while loop.
+	It will be clear that these threads wont finish their portion of points a the sime time, on thread will be finished before the other one.
+	In the static scheduling all the work is divided before starting the threads.
+	The thread that is finished before the other threads will just sit there and do nothing because it cannot steal points from other threads.
+	The dynamic scheduler doesn't divide all the point in the begin. Each thread gets a couple of points assigned.
+	if a thread finishes it can request more points to process. The dynamic scheduler will therfore be perfect for our goal.
+	We can see from table \ref{table:mandel_schedulers} that this works in practice as well.
+	The dynamic scheduler is much faster than the static scheduler.
+	The guided scheduler also works quite good, but not as good as the dynamic one.
+	
+\begin{table}
+	\caption{Running mandel with output using different schedulers. The resolution is 0.001.}
+	\label{table:mandel_schedulers}
+	\begin{tabular}{| c | c | c | c | c | c | c | c |}
+		\hline
+		Dynamic & Static & Guided\\ 
+		\hline
+		0,470178 & 0,757189 & 0,501167\\ 
+		0,47692 & 0,768196 & 0,503846\\ 
+		0,481399 & 0,784334 & 0,5018\\ 
+		0,482518 & 0,806455 & 0,502887\\ 
+		0,490624 & 0,797248 & 0,523842\\ 
+		0,508222 & 0,782431 & 0,539778\\ 
+		0,504364 & \st{0,821781} & 0,539267\\ 
+		0,533801 & 0,805446 & 0,552913\\ 
+		0,528836 & 0,816622 & \st{0,577115}\\ 
+		0,481194 & 0,818687 & 0,554339\\ 
+		0,479515 & 0,765153 & 0,501227\\ 
+		0,479229 & 0,771336 & 0,500563\\ 
+		0,482719 & 0,765416 & \st{0,487623}\\ 
+		\st{0,464592} & 0,786886 & 0,490257\\ 
+		0,500019 & \st{0,749763} & 0,540523\\ 
+		0,482475 & 0,764995 & 0,530378\\ 
+		0,521944 & 0,769605 & 0,552142\\ 
+		0,523241 & 0,818235 & 0,554799\\ 
+		\st{0,533844} & 0,814846 & 0,503505\\ 
+		0,483639 & 0,769063 & 0,50325\\ 
+		\hline
+		0,4950465 & 0,7867857222 & 0,5220268333\\ 
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{Best run times}
+	To be continued....
+
+\end{document}
