@@ -26,11 +26,11 @@
 	The mandelbrot application isn't an application with a fixed amount of instructions in each loop.
 	In the loop a while statement sits, which runs a couple of times depending on the data.
 	So if each thread get a fixed amount of points to process some threads will get points that exit the while loop quickly, while a other thread can get points that take a long time to exit the while loop.
-	It will be clear that these threads wont finish their portion of points a the sime time, on thread will be finished before the other one.
+	It will be clear that these threads wont finish their portion of points a the same time, on thread will be finished before the other one.
 	In the static scheduling all the work is divided before starting the threads.
 	The thread that is finished before the other threads will just sit there and do nothing because it cannot steal points from other threads.
 	The dynamic scheduler doesn't divide all the point in the begin. Each thread gets a couple of points assigned.
-	if a thread finishes it can request more points to process. The dynamic scheduler will therfore be perfect for our goal.
+	if a thread finishes it can request more points to process. The dynamic scheduler will therefore be perfect for our goal.
 	We can see from table \ref{table:mandel_schedulers} that this works in practice as well.
 	The dynamic scheduler is much faster than the static scheduler.
 	The guided scheduler also works quite good, but not as good as the dynamic one.
@@ -71,13 +71,13 @@
 \end{table}
 
 \section{Best run times}
-	In table \ref{table:mandel_nout_o3} we can see the runtimes of the program witout any output.
+	In table \ref{table:mandel_nout_o3} we can see the runtimes of the program without any output.
 	In this case the O2 compiler flag is used.
-	As we can see the program finishes very quick using the parallel appreach and the dynamic scheduler.
+	As we can see the program finishes very quick using the parallel approach and the dynamic scheduler.
 	This is not a valid result because the compiler optimizes the code by removing unused code.
 	In our case of no output at all, all the parallel code can be removed.
-	Most of the remaining time will be starting up the threads wich terminate imediatly.
-	The sequential code doesn't finish instant, this could be casued by the the openmp compiler.
+	Most of the remaining time will be starting up the threads which terminate immediately.
+	The sequential code doesn't finish instant, this could be caused by the the openmp compiler.
 	The openmp compiler could be more reserved for optimizing sequential code than the normal compiler.\\
 	To get some real results we disabled the compiler optimalisations by removing the O2 flag.
 	The results are shown in table \ref{table:mandel_nout_schedulers}.
@@ -112,7 +112,7 @@
 	\end{table}
 	
 	\noindent The unoptimalised code still runs best using the dynamic scheduler. 
-	The best time for the unoptimalized code is therfore a run with the dynamic scheduler wit a time of 0,7672 sec.
+	The best time for the unoptimalized code is therefore a run with the dynamic scheduler wit a time of 0,7672 sec.
 	This time is close followed by a time from the guided scheduler: 0,768145 sec.
 	As we can see the time from the guided scheduler is not very close to the other times from the guided scheduler.
 	The time with optimalisations and with output is as mentioned earlier from the dynamic scheduler: 0,464592 sec.
