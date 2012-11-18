@@ -17,11 +17,14 @@ OBJFILES = $(patsubst %.c,%.o,$(SRCFILES))
 
 .PHONY: all run runlocal display clean dist todo
 
-all: $(PROGNAME)
+all: $(PROGNAME) mandel_no
 
 $(PROGNAME): $(OBJFILES)
 	$(CC) $(CFLAGS) -o $@ $^ $(LFLAGS)
-
+	
+mandel_no: mandel_no.o timer.o
+	$(CC) $(CFLAGS) -o $@ $^ $(LFLAGS)
+	
 %.o: %.c
 	$(CC) -c $(CFLAGS) -o $@ $<
 
@@ -32,7 +35,7 @@ runlocal: $(PROGNAME)
 	./$(PROGNAME) $(RUNARGS) > output
 	
 out.jpg: output
-	convert -depth 8 -size 501x400 gray:output out.jpg
+	convert -depth 8 -size 2501x2000 gray:output out.jpg
 
 display: out.jpg
 	display out.jpg
@@ -48,4 +51,4 @@ dist:
 	tar cvzf $(TARNAME) Makefile *.c *.h data/
 
 clean:
-	rm -fv $(PROGNAME) $(OBJFILES) $(TARNAME) output out.jpg
+	rm -fv $(PROGNAME) $(OBJFILES) $(TARNAME) output out.jpg mandel_no.o mandel_no

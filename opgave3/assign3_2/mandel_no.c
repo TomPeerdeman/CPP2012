@@ -18,9 +18,10 @@ const double xMax = +0.5;
 
 // And here is the resolution:
 
-const double dxy = 0.001;
+const double dxy = 0.002;
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <limits.h>
 #include "omp.h"
 
@@ -50,8 +51,6 @@ int main(void) {
         ny++;
     }
 	
-	unsigned char buf[ny][nx];
-	
     // The Mandelbrot calculation is to iterate the equation
     // z = z*z + c, where z and c are complex numbers, z is initially
     // zero, and c is the coordinate of the point being tested. If
@@ -76,15 +75,8 @@ int main(void) {
 				zx = new_zx;
 				n++;
             }
-			buf[i][j] = n;
         }
     }
-	
-	// Write the result to stdout
-	fwrite(buf, sizeof(unsigned char), nx * ny, stdout);
-
-    fprintf (stderr, "To process the image: convert -depth 8 -size %dx%d gray:output out.jpg\n",
-	     nx, ny);
 	
 	time = timer_end();
     fprintf(stderr, "Took %g seconds\n", time);
