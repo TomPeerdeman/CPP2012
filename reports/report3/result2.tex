@@ -44,8 +44,8 @@
 			Dynamic & Static & Guided\\ 
 			\hline
 			0,470178 & 0,757189 & 0,501167\\ 
-			0,47692 & 0,768196 & 0,503846\\ 
-			0,481399 & 0,784334 & 0,5018\\ 
+			0,476920 & 0,768196 & 0,503846\\ 
+			0,481399 & 0,784334 & 0,501800\\ 
 			0,482518 & 0,806455 & 0,502887\\ 
 			0,490624 & 0,797248 & 0,523842\\ 
 			0,508222 & 0,782431 & 0,539778\\ 
@@ -62,7 +62,7 @@
 			0,521944 & 0,769605 & 0,552142\\ 
 			0,523241 & 0,818235 & 0,554799\\ 
 			\st{0,533844} & 0,814846 & 0,503505\\ 
-			0,483639 & 0,769063 & 0,50325\\ 
+			0,483639 & 0,769063 & 0,503250\\ 
 			\hline
 			0,495047 & 0,786786 & 0,522027\\ 
 			\hline
@@ -79,70 +79,77 @@
 	Most of the remaining time will be starting up the threads wich terminate imediatly.
 	The sequential code doesn't finish instant, this could be casued by the the openmp compiler.
 	The openmp compiler could be more reserved for optimizing sequential code than the normal compiler.\\
-	To get some real results we disabled the compiler optimalisations by removing the O3 flag.
+	To get some real results we disabled the compiler optimalisations by removing the O2 flag.
+	The results are shown in table \ref{table:mandel_nout_schedulers}.
+	We can see that the times are not as good as in table \ref{table:mandel_schedulers}, this is because the compiler optimalisations are turned off.
+	If we compare the sequential code in table \ref{table:mandel_nout_schedulers} with the sequential code using the compiler optimalisations in table \ref{table:mandel_nout_o3}
+	we see the difference in run time caused by the compiler optimalisations is 0.53 sec.
+	This difference is almost 50\% of the runtime of the unoptimized sequential code.\\
 	
+	\begin{table}[h]
+		\caption{Running mandel without output and with compiler optimalisations.\\The resolution is 0.001.}
+		\label{table:mandel_nout_o3}
+		\begin{center}
+			\begin{tabular}{| c | c |}
+				\hline
+				Sequential & Dynamic\\ 
+				\hline
+				0,651594 & 0,0818824\\ 
+				0,651586 & 0,0818495\\ 
+				0,651614 & 0,0818448\\ 
+				0,651548 & 0,0834362\\ 
+				0,651608 & 0,0818953\\ 
+				0,651556 & 0,0818747\\ 
+				0,651563 & \st{0,0818330}\\ 
+				\st{0,651443} & \st{0,0840247}\\ 
+				0,651496 & 0,0818772\\ 
+				\st{0,651625} & 0,0818726\\ 
+				\hline
+				0,651571 & 0,0820670\\ 
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{table}
 	
-	
-	
-\begin{table}
-	\caption{Running mandel without output and compiler flag O3.\\The resolution is 0.001.}
-	\label{table:mandel_nout_o3}
-	\begin{center}
-		\begin{tabular}{| c | c |}
-			\hline
-			Sequential & Dynamic\\ 
-			\hline
-			0,651594 & 0,0818824\\ 
-			0,651586 & 0,0818495\\ 
-			0,651614 & 0,0818448\\ 
-			0,651548 & 0,0834362\\ 
-			0,651608 & 0,0818953\\ 
-			0,651556 & 0,0818747\\ 
-			0,651563 & \st{0,081833}\\ 
-			\st{0,651443} & \st{0,0840247}\\ 
-			0,651496 & 0,0818772\\ 
-			\st{0,651625} & 0,0818726\\ 
-			\hline
-			0,651571 & 0,082067\\ 
-			\hline
-		\end{tabular}
-	\end{center}
-\end{table}
-	
+	\noindent The unoptimalised code still runs best using the dynamic scheduler. 
+	The best time for the unoptimalized code is therfore a run with the dynamic scheduler wit a time of 0,7672 sec.
+	This time is close followed by a time from the guided scheduler: 0,768145 sec.
+	As we can see the time from the guided scheduler is not very close to the other times from the guided scheduler.
+	The time with optimalisations and with output is as mentioned earlier from the dynamic scheduler: 0,464592 sec.
 
-\begin{table}
-	\caption{Running mandel without output using different schedulers and sequential.\\The resolution is 0.001 and no compiler optimalizations are used.}
-	\label{table:mandel_nout_schedulers}
-	\begin{center}
-		\begin{tabular}{| c | c | c | c |}
-			\hline
-			Sequential & Dynamic & Static & Guided\\ 
-			\hline
-			1,18568 & 0,768784 & 0,82672 & 0,772624\\ 
-			\st{1,18586} & 0,769449 & 0,84205 & 0,776406\\ 
-			1,18567 & 0,76848 & 0,842205 & 0,77863\\ 
-			1,18552 & 0,77718 & 0,829137 & 0,78726\\ 
-			1,18568 & 0,774852 & 0,852485 & 0,788156\\ 
-			1,18566 & 0,791338 & 0,840201 & 0,782334\\ 
-			1,1856 & 0,771359 & 0,83925 & 0,782231\\ 
-			\st{1,18547} & 0,773696 & 0,853402 & 0,782055\\ 
-			1,1856 & 0,796883 & \st{0,926374} & \st{0,814374}\\ 
-			1,18549 & 0,771051 & 0,849094 & 0,776001\\ 
-			1,1857 & 0,770216 & \st{0,807327} & 0,780678\\ 
-			1,18569 & \st{0,7672} & 0,836319 & 0,787131\\ 
-			1,18566 & 0,770971 & 0,843178 & 0,780753\\ 
-			1,1857 & 0,776165 & 0,849376 & 0,784131\\ 
-			1,1855 & 0,770631 & 0,851354 & 0,776077\\ 
-			1,18562 & 0,775439 & 0,860626 & 0,789332\\ 
-			1,18573 & 0,795864 & 0,85321 & 0,778719\\ 
-			1,18562 & \st{0,797003} & 0,856143 & 0,779836\\ 
-			1,18549 & 0,771624 & 0,85225 & 0,785575\\ 
-			1,18554 & 0,770685 & 0,847866 & \st{0,768145}\\ 
-			\hline
-			1,185619 & 0,775815 & 0,845826 & 0,781552\\ 
-			\hline
-		\end{tabular}
-	\end{center}
-\end{table}
+	\begin{table}
+		\caption{Running mandel without output using different schedulers and sequential.\\The resolution is 0.001 and no compiler optimalizations are used.}
+		\label{table:mandel_nout_schedulers}
+		\begin{center}
+			\begin{tabular}{| c | c | c | c |}
+				\hline
+				Sequential & Dynamic & Static & Guided\\ 
+				\hline
+				1,18568 & 0,768784 & 0,826720 & 0,772624\\ 
+				\st{1,18586} & 0,769449 & 0,842050 & 0,776406\\ 
+				1,18567 & 0,76848 & 0,842205 & 0,778630\\ 
+				1,18552 & 0,77718 & 0,829137 & 0,787260\\ 
+				1,18568 & 0,774852 & 0,852485 & 0,788156\\ 
+				1,18566 & 0,791338 & 0,840201 & 0,782334\\ 
+				1,18560 & 0,771359 & 0,83925 & 0,782231\\ 
+				\st{1,18547} & 0,773696 & 0,853402 & 0,782055\\ 
+				1,18560 & 0,796883 & \st{0,926374} & \st{0,814374}\\ 
+				1,18549 & 0,771051 & 0,849094 & 0,776001\\ 
+				1,18570 & 0,770216 & \st{0,807327} & 0,780678\\ 
+				1,18569 & \st{0,7672} & 0,836319 & 0,787131\\ 
+				1,18566 & 0,770971 & 0,843178 & 0,780753\\ 
+				1,18570 & 0,776165 & 0,849376 & 0,784131\\ 
+				1,18550 & 0,770631 & 0,851354 & 0,776077\\ 
+				1,18562 & 0,775439 & 0,860626 & 0,789332\\ 
+				1,18573 & 0,795864 & 0,853210 & 0,778719\\ 
+				1,18562 & \st{0,797003} & 0,856143 & 0,779836\\ 
+				1,18549 & 0,771624 & 0,852250 & 0,785575\\ 
+				1,18554 & 0,770685 & 0,847866 & \st{0,768145}\\ 
+				\hline
+				1,18562 & 0,775815 & 0,845826 & 0,781552\\ 
+				\hline
+			\end{tabular}
+		\end{center}
+	\end{table}
 
 \end{document}
