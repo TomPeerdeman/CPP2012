@@ -1,0 +1,8 @@
+To compile type ./compile.sh
+
+To run type java -jar nl.uva.AssignmentSequential.jar <query file> <dataset file> <subtitution matrix> <num of seq>
+
+The folder data contains the necessary input files.
+
+example: 
+java -jar nl.uva.AssignmentSequential.jar data/query.fa data/Homo_sapiens.GRCh37.69.pep.abinitio.fa data/BLOSUM100 10

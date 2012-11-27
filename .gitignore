@@ -1,3 +1,11 @@
 *.exe
 *.o
 *.so
+*.out
+
+*.log
+*.aux
+
+mpitest
+
+.gitignore
