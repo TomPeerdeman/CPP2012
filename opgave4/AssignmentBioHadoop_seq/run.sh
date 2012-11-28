@@ -1,0 +1,1 @@
+time java -jar nl.uva.AssignmentSequential.jar data/query.fa data/Homo_sapiens.GRCh37.69.pep.abinitio.fa data/BLOSUM100 10
