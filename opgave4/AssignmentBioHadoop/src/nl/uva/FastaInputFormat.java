@@ -90,6 +90,7 @@ public class FastaInputFormat extends FileInputFormat<LongWritable, Text> {
 						// The start of the new split is the start of this record.
 						start = totalBytesRead;
 						bytesRead = 0;
+						recordsRead = 0;
 					}
                 }
 				
