@@ -19,6 +19,7 @@ import org.biojava.bio.alignment.AlignmentAlgorithm;
 import org.biojava.bio.alignment.AlignmentPair;
 import org.biojava.bio.alignment.SubstitutionMatrix;
 import org.biojava.bio.seq.Sequence;
+import org.biojava.bio.seq.ProteinTools;
 import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
@@ -67,24 +68,24 @@ public class Map extends MapReduceBase implements Mapper<LongWritable, Text, Sco
     @Override
     public void map(LongWritable key, Text value, OutputCollector<ScoreWritable, Text> oc, Reporter rprtr) throws IOException {
         try {
-			log.info("New sequence from pos " + key + ": " + value);
             //Each Mapper receives a sequence from the dataset and performs 
             //an Alignment.            
             
             //Here you need to create the target protein. Make sure you split the 
             //header from the sequence
             
-            //Sequence target = null;
+            Sequence target = ProteinTools.createProteinSequence(value.toString(), "prot_" + key.get());
             //Use the Sequence target = Protein Tools.createProteinSequence(protein Sequence, name);
             
            
-            //AlignmentPair pair = aligner.pairwiseAlignment(query, target);
+            AlignmentPair pair = aligner.pairwiseAlignment(query, target);
             //Get the score and emit it to the Reducers 
-            //int score = pair.getScore();
+            int score = pair.getScore();
             
             //You have to emit the results to the reducer. You have to add the 
             //score as the key ecause mapper emmits the results in a sorted order
             //Use oc.collect(SCORE, TARGET_SEQUENCE); method to do that.
+			oc.collect(new ScoreWritable(score), new Text(value));
             //Hint: to get the sequence as a string use target.seqString()
             
             //Report the progress
