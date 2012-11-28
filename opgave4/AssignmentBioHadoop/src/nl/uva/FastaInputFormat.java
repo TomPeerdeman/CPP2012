@@ -56,7 +56,7 @@ public class FastaInputFormat extends FileInputFormat<LongWritable, Text> {
                 splits.addAll(getSplitsForFile(p, job, numSplits));
             }
         }
-        log.info("Number of splis: " + splits.size() + ". Number of records: " + totalRecordsRead);
+        log.info("Number of splits: " + splits.size() + ". Number of records: " + totalRecordsRead);
         return splits.toArray(new org.apache.hadoop.mapred.InputSplit[splits.size()]);
     }
 
@@ -82,10 +82,14 @@ public class FastaInputFormat extends FileInputFormat<LongWritable, Text> {
             while ((num = lr.readLine(line)) > 0) {
                 //We hit the starting line 
                 if (line.toString().indexOf(">") >= 0 || totalbytesRead + num >= fs.getFileStatus(inputPath).getLen()) {
-					recordsRead++;
-					totalRecordsRead++;
+					// Only increment the number of records if we have actually read a record.
+					if(bytesRead != 0){
+						recordsRead++;
+						totalRecordsRead++;
+					}
 					
 					if(recordsRead >= recordsPerSplit){
+						log.info("New split at " + start + " of " + bytesRead + " bytes");
 						splits.add(new FileSplit(inputPath, start, bytesRead, new String[]{}));
 						// The start of the new split is the start of this record.
 						start = totalbytesRead;
@@ -100,6 +104,7 @@ public class FastaInputFormat extends FileInputFormat<LongWritable, Text> {
             
             //Add the leftovers
             if (totalRecordsRead % recordsPerSplit != 0 || recordsPerSplit > totalRecordsRead) {
+				log.info("Final split at " + start + " of " + bytesRead + " bytes");
                 splits.add(new FileSplit(inputPath, start, bytesRead, new String[]{}));
             }
 

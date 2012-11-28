@@ -67,19 +67,20 @@ public class Map extends MapReduceBase implements Mapper<LongWritable, Text, Sco
     @Override
     public void map(LongWritable key, Text value, OutputCollector<ScoreWritable, Text> oc, Reporter rprtr) throws IOException {
         try {
+			log.info("New sequence from pos " + key + ": " + value);
             //Each Mapper receives a sequence from the dataset and performs 
             //an Alignment.            
             
             //Here you need to create the target protein. Make sure you split the 
             //header from the sequence
             
-            Sequence target = null;
+            //Sequence target = null;
             //Use the Sequence target = Protein Tools.createProteinSequence(protein Sequence, name);
             
            
-            AlignmentPair pair = aligner.pairwiseAlignment(query, target);
+            //AlignmentPair pair = aligner.pairwiseAlignment(query, target);
             //Get the score and emit it to the Reducers 
-            int score = pair.getScore();
+            //int score = pair.getScore();
             
             //You have to emit the results to the reducer. You have to add the 
             //score as the key ecause mapper emmits the results in a sorted order

@@ -69,21 +69,29 @@ public class FastaRecordReader implements org.apache.hadoop.mapred.RecordReader<
         int num = 0;
         Text line = new Text();
         StringBuilder sequence = new StringBuilder();
+		key.set(pos);
         int recordsRead = 0;
         while (pos <= end) {
             num = lr.readLine(line);
             pos += num;
-            if (line.toString().indexOf(">") >= 0 || pos >= end) {                
-                // set key value pairs for mapper
-                key.set(pos);
-                value.set(sequence.toString());
-                // what else?
-                // return true; ?
+            if (line.toString().indexOf(">") >= 0 || pos >= end) {
+				if(recordsRead != 0){
+					if(pos >= end){
+						// Final characters of last record.
+						sequence.append(line.toString());
+					}else{
+						// Next read needs to read this header again.
+						pos -= num;
+					}
+					
+					value.set(sequence.toString());
+					return true;
+				}
+				recordsRead++;
             } else {
-                // build the protein sequence               
-                sequence.append(line.toString());
-                // what else?
+               sequence.append(line.toString());
             }
+			
         }
         return false;
     }
