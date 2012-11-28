@@ -88,7 +88,7 @@ public class FastaInputFormat extends FileInputFormat<LongWritable, Text> {
 					if(recordsRead >= recordsPerSplit){
 						splits.add(new FileSplit(inputPath, start, bytesRead, new String[]{}));
 						// The start of the new split is the start of this record.
-						start = totalBytesRead;
+						start = totalbytesRead;
 						bytesRead = 0;
 						recordsRead = 0;
 					}
