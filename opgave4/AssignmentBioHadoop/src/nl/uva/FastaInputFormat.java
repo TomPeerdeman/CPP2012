@@ -82,10 +82,19 @@ public class FastaInputFormat extends FileInputFormat<LongWritable, Text> {
             while ((num = lr.readLine(line)) > 0) {
                 //We hit the starting line 
                 if (line.toString().indexOf(">") >= 0 || totalbytesRead + num >= fs.getFileStatus(inputPath).getLen()) {
-                    //Use splits.add(new FileSplit(inputPath, start, bytesRead, new String[]{}));
-                    //to add splits. Where inputPath is the location of the FASTA 
-                    //file in the DFS start is the start of the bytes to read and bytesRead the length 
+					recordsRead++;
+					totalRecordsRead++;
+					
+					if(recordsRead >= recordsPerSplit){
+						splits.add(new FileSplit(inputPath, start, bytesRead, new String[]{}));
+						// The start of the new split is the start of this record.
+						start = totalBytesRead;
+						bytesRead = 0;
+					}
                 }
+				
+				totalbytesRead += num;
+				bytesRead += num;
             }
             
             //Add the leftovers
