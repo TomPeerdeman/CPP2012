@@ -6,7 +6,7 @@ set ytic auto                          # set ytics automatically
 set title "BioHadoop"
 set yrange [0 : 400]
 set xlabel "Workers"
-set ylabel "Average Total Time"
+set ylabel "Time in seconds"
 set grid x y
 unset colorbox
 
@@ -16,7 +16,8 @@ set style line 2 lt 2 lw 1
 set style line 3 lt 3 lw 1 
 
 plot \
-"plotdata.dat" using 1:2 title 'Time vs Nodes' with lines ls 1
+"plotdata.dat" using 1:2 title 'Average' with lines ls 2, \
+"plotdata.dat" using 1:3:4:5 title 'Results with errorbars' with yerrorbars ls 1
 
 set term png
 set output "speedplot.png"

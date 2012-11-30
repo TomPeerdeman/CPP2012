@@ -122,8 +122,13 @@
     \begin{center}
       \includegraphics[width=0.9\textwidth]{speedplot.png}
     \end{center}
-    
+    In these test runs there where 47550 records to split in total.
+    If Hadoop splits these records, it will only assign whole records.
+    Alls records that are not assigned are given to an extra node that is
+    added by Hadoop itself. This is why some of the values in the table
+    have a (+1) behind the number of splits.
   \subsection{Discussion and Optimization}
     The easiest way to get an even higher speedup is to add more worker nodes.
+    There will however be a limit to the amount of workers a program can need.
   
 \end{document}
