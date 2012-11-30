@@ -105,18 +105,18 @@
 			    \hline
 			    Sequential & 1 Split & 2 Splits & 4 Splits (+1) & 8 Splits (+1) & 16 Splits (+1)\\ 
 			    \hline
-			    a & 6m 11.580s & 4m 39.198s & 2m 47.940s & 2m 15.707s & 1m 3.840s\\
+			    3m 51.018s & 6m 11.580s & 4m 39.198s & 2m 47.940s & 2m 15.707s & 1m 3.840s\\
 			    \hline
-			    a & 6m 13.266s & 3m 53.196s & 2m 44.663s & 2m 13.942s & 1m 3.763s\\
+			    3m 53.448s & 6m 13.266s & 3m 53.196s & 2m 44.663s & 2m 13.942s & 1m 3.763s\\
 			    \hline
-			    a & 6m 14.353s & 4m 42.668s & 2m 45.363s & 2m 14.414s & 1m 3.453s\\
+			    3m 50.621s & 6m 14.353s & 4m 42.668s & 2m 45.363s & 2m 14.414s & 1m 3.453s\\
 			    \hline
 			    \multicolumn{6}{|l|}{Average time:}\\
 			    \hline
-			    a & 6m 13.066s & 4m 25.021s & 2m 45.989s & 2m 14.688s & 1m 3.685s\\
+			    3m 51.696s & 6m 13.066s & 4m 25.021s & 2m 45.989s & 2m 14.688s & 1m 3.685s\\
 			    \hline
 		    \end{tabular}
-  	    \caption{Numerical speedup, increasing splits in Hadoop}
+  	    \caption{Numerical speedup with increasing splits in Hadoop}
 	    \end{center}
     \end{table}
     \begin{center}
@@ -127,14 +127,17 @@
     Alls records that are not assigned are given to an extra node that is
     added by Hadoop itself. This is why some of the values in the table
     have a (+1) behind the number of splits.
+    The sequential test was run with node069 from fs0.das3. 
   \subsection{Discussion}
+    Hadoop is faster then the sequential code if it has 4 or more workers
+    available with this program. This has to do with the communication
+    between the TaskTracker(s). When there are only a few nodes,
+    this takes more time to setup then the sequential code needs to compute.
     The time needed to compute the program seems to be decreasing exponentially
     when more workers are added. This seems logical, due to the fact that
-    parallalization only works onto a certai point when it comes to faster
+    parallalization only works onto a certain point when it comes to faster
     computations.
   \subsection{Optimization}
-    The easiest way to get an even higher speedup is to add more worker nodes.
-    There will however be a limit to the amount of workers a program can need.
-    %TODO more ways to optimize
+    %TODO how to optimize the code
   
 \end{document}
