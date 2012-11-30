@@ -94,7 +94,7 @@
     Hadoop results can then be compared with the results from the sequential code.
     
   \subsection{Difference between Hadoop and Sequential}
-    
+  %TODO explain the difference between Hadoop and sequential
   
   \subsection{Results}
     These are the results gathered from the test runs.
@@ -127,8 +127,14 @@
     Alls records that are not assigned are given to an extra node that is
     added by Hadoop itself. This is why some of the values in the table
     have a (+1) behind the number of splits.
-  \subsection{Discussion and Optimization}
+  \subsection{Discussion}
+    The time needed to compute the program seems to be decreasing exponentially
+    when more workers are added. This seems logical, due to the fact that
+    parallalization only works onto a certai point when it comes to faster
+    computations.
+  \subsection{Optimization}
     The easiest way to get an even higher speedup is to add more worker nodes.
     There will however be a limit to the amount of workers a program can need.
+    %TODO more ways to optimize
   
 \end{document}
