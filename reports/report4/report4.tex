@@ -55,10 +55,11 @@
     to form an output.
     
   \subsection{Scalable}
-    Hadoop is scalable. This means that you can assign more and more workers
-    to the master node and receive faster computations because of this
-    (this will eventually not speedup anymore, because there is not enough work
-    to occupy all the worker nodes).
+    Hadoop is scalable. This means that the speedup increasement will stay
+    roughly the same, despite the amount of work you give to Hadoop.
+    For example, a small job can have a speed up of 20\% with Hadoop on four
+    worker nodes. A bigger job will also have around 20 \% speedup on four
+    worker nodes.
     
   \subsection{Architecture}
     Hadoop uses a special Distributed File System called the Hadoop
@@ -102,29 +103,24 @@
 	    \begin{center}
 		    \begin{tabular}{| c | c | c | c | c | c |}
 			    \hline
-			    Sequential & 1 Node in total & 2 Nodes in total & 4 Nodes in total & 8 Nodes in total & 16 Nodes in total\\ 
+			    Sequential & 1 Split & 2 Splits & 4 Splits (+1) & 8 Splits (+1) & 16 Splits (+1)\\ 
 			    \hline
-			    a & b & c & d & e & f\\
+			    a & 6m 11.580s & 4m 39.198s & 2m 47.940s & 2m 15.707s & 1m 3.840s\\
 			    \hline
-			    a & b & c & d & e & f\\
+			    a & 6m 13.266s & 3m 53.196s & 2m 44.663s & 2m 13.942s & 1m 3.763s\\
 			    \hline
-			    a & b & c & d & e & f\\
-			    \hline
-			    a & b & c & d & e & f\\
-			    \hline
-			    a & b & c & d & e & f\\
+			    a & 6m 14.353s & 4m 42.668s & 2m 45.363s & 2m 14.414s & 1m 3.453s\\
 			    \hline
 			    \multicolumn{6}{|l|}{Average time:}\\
 			    \hline
-			    a & b & c & d & e & f\\
+			    a & 6m 13.066s & 4m 25.021s & 2m 45.989s & 2m 14.688s & 1m 3.685s\\
 			    \hline
 		    \end{tabular}
   	    \caption{Numerical speedup, increasing splits in Hadoop}
 	    \end{center}
     \end{table}
     \begin{center}
-      \textbf{$<$plaatje hier$>$}
-      %\includegraphics[width=0.9\textwidth]{speedplot.png}
+      \includegraphics[width=0.9\textwidth]{speedplot.png}
     \end{center}
     
   \subsection{Discussion and Optimization}
