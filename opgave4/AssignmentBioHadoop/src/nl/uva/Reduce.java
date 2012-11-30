@@ -28,9 +28,6 @@ public class Reduce extends MapReduceBase implements Reducer<ScoreWritable, Text
         while (valueItrtr.hasNext() && counter < numberOfrelative) {
             counter++;
             
-            //Here you only have to write the results to the output
-            //Use the score as key and the sequence as value. 
-            
 			output.collect(key, valueItrtr.next());
 			
             //Report progress

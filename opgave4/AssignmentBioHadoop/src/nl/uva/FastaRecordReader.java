@@ -70,12 +70,12 @@ public class FastaRecordReader implements org.apache.hadoop.mapred.RecordReader<
         Text line = new Text();
         StringBuilder sequence = new StringBuilder();
 		key.set(pos);
-        int recordsRead = 0;
+        boolean recordRead = false;
         while (pos <= end) {
             num = lr.readLine(line);
             pos += num;
             if (line.toString().indexOf(">") >= 0 || pos >= end) {
-				if(recordsRead != 0){
+				if(recordRead){
 					if(pos >= end){
 						// Final characters of last record.
 						sequence.append(line.toString());
@@ -87,7 +87,7 @@ public class FastaRecordReader implements org.apache.hadoop.mapred.RecordReader<
 					value.set(sequence.toString());
 					return true;
 				}
-				recordsRead++;
+				recordRead = true;
             } else {
                sequence.append(line.toString());
             }
