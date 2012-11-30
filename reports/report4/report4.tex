@@ -72,8 +72,9 @@
     a TaskTracker, a NameNode and a DataNode. The worker however, only has a
     TaskTracker and a DataNode.
     NameNodes contain information about where data is kept, but does not store
-    data itself. Data is kept inside DataNodes. These connect to DataNodes to
-    tell the DataNodes where the data is. The JobTracker talks to the NameNode
+    data itself. Data is kept inside DataNodes. The NameNodes connect to 
+    DataNodes to tell them where the data is.
+    The JobTracker talks to the NameNode
     to see what data can be sent. If data is found it makes contact with a
     TaskTracker of an open node and sends the information of the NameNode
     to this node. Preferably it sends the task to an empty slot of a node
@@ -100,6 +101,7 @@
     These are the results gathered from the test runs.
     \begin{table}[H]
 	    \label{table:hadoop}
+	    \caption{Numerical speedup with increasing splits in Hadoop}
 	    \begin{center}
 		    \begin{tabular}{| c | c | c | c | c | c |}
 			    \hline
@@ -116,23 +118,28 @@
 			    3m 51.696s & 6m 13.066s & 4m 25.021s & 2m 45.989s & 2m 14.688s & 1m 3.685s\\
 			    \hline
 		    \end{tabular}
-  	    \caption{Numerical speedup with increasing splits in Hadoop}
 	    \end{center}
     \end{table}
     \begin{center}
-      \includegraphics[width=0.9\textwidth]{speedplot.png}
+      \includegraphics[width=0.7\textwidth]{speedplot.png}
     \end{center}
     In these test runs there where 47550 records to split in total.
     If Hadoop splits these records, it will only assign whole records.
-    Alls records that are not assigned are given to an extra node that is
-    added by Hadoop itself. This is why some of the values in the table
+    Alls records that are not assigned are given to an extra node. This is why some of the values in the table
     have a (+1) behind the number of splits.
-    The sequential test was run with node069 from fs0.das3. 
+    The sequential test was run on node069.fs0.das3.cs.vu.nl.\\
+    The speedup is shown in the graph below, with one being the
+    speed for the sequential code to compute.
+    \begin{center}
+      \includegraphics[width=0.7\textwidth]{speedup.png}
+    \end{center}
   \subsection{Discussion}
     Hadoop is faster then the sequential code if it has 4 or more workers
     available with this program. This has to do with the communication
     between the TaskTracker(s). When there are only a few nodes,
     this takes more time to setup then the sequential code needs to compute.
+    Hadoop also reads the inputfiles twice. The first time to see how many
+    each split will get and the second time to really read the file for the program.
     The time needed to compute the program seems to be decreasing exponentially
     when more workers are added. This seems logical, due to the fact that
     parallalization only works onto a certain point when it comes to faster
