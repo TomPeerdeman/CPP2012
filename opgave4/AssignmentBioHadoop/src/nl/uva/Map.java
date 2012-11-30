@@ -71,22 +71,12 @@ public class Map extends MapReduceBase implements Mapper<LongWritable, Text, Sco
             //Each Mapper receives a sequence from the dataset and performs 
             //an Alignment.            
             
-            //Here you need to create the target protein. Make sure you split the 
-            //header from the sequence
-            
             Sequence target = ProteinTools.createProteinSequence(value.toString(), "prot_" + key.get());
-            //Use the Sequence target = Protein Tools.createProteinSequence(protein Sequence, name);
-            
            
             AlignmentPair pair = aligner.pairwiseAlignment(query, target);
             //Get the score and emit it to the Reducers 
-            int score = pair.getScore();
-            
-            //You have to emit the results to the reducer. You have to add the 
-            //score as the key ecause mapper emmits the results in a sorted order
-            //Use oc.collect(SCORE, TARGET_SEQUENCE); method to do that.
-			oc.collect(new ScoreWritable(score), new Text(value));
-            //Hint: to get the sequence as a string use target.seqString()
+
+			oc.collect(new ScoreWritable(pair.getScore()), new Text(value));
             
             //Report the progress
             rprtr.incrCounter(nl.uva.Map.Counters.INPUT_SEQUENCES, 1);
