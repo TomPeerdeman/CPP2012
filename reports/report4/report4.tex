@@ -57,8 +57,8 @@
   \subsection{Scalable}
     Hadoop is scalable. This means that you can assign more and more workers
     to the master node and receive faster computations because of this
-    (this will eventually not happen anymore, because there isn'y enough work
-    to give to all the nodes).
+    (this will eventually not speedup anymore, because there is not enough work
+    to occupy all the worker nodes).
     
   \subsection{Architecture}
     Hadoop uses a special Distributed File System called the Hadoop
@@ -96,7 +96,37 @@
     
   
   \subsection{Results}
-  
+    These are the results gathered from the test runs.
+    \begin{table}[H]
+	    \label{table:hadoop}
+	    \begin{center}
+		    \begin{tabular}{| c | c | c | c | c | c |}
+			    \hline
+			    Sequential & 1 Node in total & 2 Nodes in total & 4 Nodes in total & 8 Nodes in total & 16 Nodes in total\\ 
+			    \hline
+			    a & b & c & d & e & f\\
+			    \hline
+			    a & b & c & d & e & f\\
+			    \hline
+			    a & b & c & d & e & f\\
+			    \hline
+			    a & b & c & d & e & f\\
+			    \hline
+			    a & b & c & d & e & f\\
+			    \hline
+			    \multicolumn{6}{|l|}{Average time:}\\
+			    \hline
+			    a & b & c & d & e & f\\
+			    \hline
+		    \end{tabular}
+  	    \caption{Numerical speedup, increasing splits in Hadoop}
+	    \end{center}
+    \end{table}
+    \begin{center}
+      \textbf{$<$plaatje hier$>$}
+      %\includegraphics[width=0.9\textwidth]{speedplot.png}
+    \end{center}
+    
   \subsection{Discussion and Optimization}
     The easiest way to get an even higher speedup is to add more worker nodes.
   
