@@ -57,7 +57,8 @@
   \subsection{Scalable}
     Hadoop is scalable. This means that you can assign more and more workers
     to the master node and receive faster computations because of this
-    (this will eventually not happen anymore, because there isn'y enough work to give to all the nodes).
+    (this will eventually not happen anymore, because there isn'y enough work
+    to give to all the nodes).
     
   \subsection{Architecture}
     Hadoop uses a special Distributed File System called the Hadoop
@@ -84,4 +85,19 @@
     the task to a new node again. When everything happened according to plan,
     the JobTracker changes the status of the worker from occupied to free.
     
+  \section{BioHadoop speedup}
+    As an example, the speed up is measured for a program that searches,
+    arranges and aligns sequences of proteins. This can be done sequential.
+    Hadoop can be used to parallelize the program. To measure the speed up,
+    multiple tests are run with an increasing amount of worker nodes. The
+    Hadoop results can then be compared with the results from the sequential code.
+    
+  \subsection{Difference between Hadoop and Sequential}
+    
+  
+  \subsection{Results}
+  
+  \subsection{Discussion and Optimization}
+    The easiest way to get an even higher speedup is to add more worker nodes.
+  
 \end{document}
