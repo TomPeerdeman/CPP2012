@@ -16,8 +16,7 @@ set style line 2 lt 2 lw 1
 set style line 3 lt 3 lw 1 
 
 plot \
-"speedplotdata.dat" using 1:2 title 'Sequential' with lines ls 2, \
-"speedplotdata.dat" using 1:3 title 'Speed' with lines ls 1
+"speedplotdata.dat" title 'Speed' with yerrorbars ls 1
 
 set term png
 set output "speedup.png"
