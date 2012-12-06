@@ -7,8 +7,12 @@
 #include "generatedata.h"
 #include "wave_kernel.h"
 
+float sin(float x){
+	return (float) sin((double) x);
+}
+
 int main(int argc, char **argv){
-	double *old, *cur, *next, *ret;
+	float *old, *cur, *next, *ret;
 	int i_max, t_max;
 	
 	if(argc < 3){
@@ -34,18 +38,18 @@ int main(int argc, char **argv){
 		printf("argument error: i_max should be >2.\n");
 		return EXIT_FAILURE;
 	}
-	if(t_max < 1){
+	if(t_max < 0){
 		printf("argument error: t_max should be >=1.\n");
 		return EXIT_FAILURE;
 	}
 	
-	old = new double[i_max];
-    cur = new double[i_max];
-    next = new double[i_max];
+	old = new float[i_max];
+    cur = new float[i_max];
+    next = new float[i_max];
 	
-	memset(old, 0, i_max * sizeof(double));	
-	memset(cur, 0, i_max * sizeof(double));	
-	memset(next, 0, i_max * sizeof(double));	
+	memset(old, 0, i_max * sizeof(float));	
+	memset(cur, 0, i_max * sizeof(float));	
+	memset(next, 0, i_max * sizeof(float));	
 	
 	if(argc > 3){
 		if(strcmp(argv[3], "sin") == 0){
@@ -62,8 +66,8 @@ int main(int argc, char **argv){
 				printf("No files specified!\n");
 				return EXIT_FAILURE;
 			}
-			file_read_double_array(argv[4], old, i_max);
-			file_read_double_array(argv[5], cur, i_max);
+			file_read_float_array(argv[4], old, i_max);
+			file_read_float_array(argv[5], cur, i_max);
 		}else{
 			printf("Unknown initial mode: %s.\n", argv[3]);
 			return EXIT_FAILURE;
@@ -76,7 +80,7 @@ int main(int argc, char **argv){
 	
 	ret = computeWaveCuda(i_max, t_max, 128, old, cur, next);
 	
-	file_write_double_array("result.txt", ret, i_max);
+	file_write_float_array("result.txt", ret, i_max);
 	
 	delete[] old;
 	delete[] cur;

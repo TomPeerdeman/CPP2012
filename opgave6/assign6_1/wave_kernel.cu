@@ -6,7 +6,7 @@
 
 #include "timer.h"
 
-#define SPATIAL_IMPACT 0.2 
+#define SPATIAL_IMPACT 0.0f
 
 using namespace std;
 
@@ -27,27 +27,27 @@ static void checkCudaCall(cudaError_t result) {
     }
 }
 
-__global__ void waveKernel(unsigned int n, double* old, double* cur, double* next) {
+__global__ void waveKernel(unsigned int n, float* old, float* cur, float* next) {
     unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
 	
 	// Don't calculate the borders or out of the borders.
 	if(i > 0 && i < n){
-		next[i] = 2.0 * cur[i] - old[i] +
-            SPATIAL_IMPACT * ((cur[i - 1] - (2.0 * cur[i] - cur[i + 1])));
+		next[i] = 2.0f * cur[i] - old[i] + 
+			SPATIAL_IMPACT * ((cur[i - 1] - (2.0f * cur[i] - cur[i + 1])));
 	}
 }
 
-double *computeWaveCuda(int i_max, int t_max, int tpb, double *hOld, double *hCur, double *hNext){
-	double *dOld, *dCur, *dNext, *tmp;
-	
+float *computeWaveCuda(int i_max, int t_max, int tpb, float *hOld, float *hCur, float *hNext){
+	float *dOld, *dCur, *dNext, *tmp;
+
 	// Alloc space on the device.
-	checkCudaCall(cudaMalloc((void **) &dOld, i_max * sizeof(double)));
-	checkCudaCall(cudaMalloc((void **) &dCur, i_max * sizeof(double)));
-	checkCudaCall(cudaMalloc((void **) &dNext, i_max * sizeof(double)));
+	checkCudaCall(cudaMalloc((void **) &dOld, i_max * sizeof(float)));
+	checkCudaCall(cudaMalloc((void **) &dCur, i_max * sizeof(float)));
+	checkCudaCall(cudaMalloc((void **) &dNext, i_max * sizeof(float)));
 	
 	// Copy from main mem to device mem.
-	checkCudaCall(cudaMemcpy(dOld, hOld, i_max*sizeof(double), cudaMemcpyHostToDevice));
-	checkCudaCall(cudaMemcpy(dCur, hCur, i_max*sizeof(double), cudaMemcpyHostToDevice));
+	checkCudaCall(cudaMemcpy(dOld, hOld, i_max*sizeof(float), cudaMemcpyHostToDevice));
+	checkCudaCall(cudaMemcpy(dCur, hCur, i_max*sizeof(float), cudaMemcpyHostToDevice));
 	
 	timer waveTimer("Wave timer");
 	waveTimer.start();
@@ -74,7 +74,7 @@ double *computeWaveCuda(int i_max, int t_max, int tpb, double *hOld, double *hCu
 	cout << waveTimer;
 	
 	// Copy back the result from device mem to main mem.
-	checkCudaCall(cudaMemcpy(hCur, dCur, i_max * sizeof(double), cudaMemcpyDeviceToHost));
+	checkCudaCall(cudaMemcpy(hCur, dCur, i_max * sizeof(float), cudaMemcpyDeviceToHost));
 	
 	// Free device mem.
 	checkCudaCall(cudaFree(dOld));
