@@ -6,7 +6,7 @@
 
 #include "timer.h"
 
-#define SPATIAL_IMPACT 0.0f
+#define SPATIAL_IMPACT 0.2f
 
 using namespace std;
 
