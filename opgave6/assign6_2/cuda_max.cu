@@ -40,20 +40,15 @@ float *computeMaxCuda(int length){
   for(int i = 0; i< length); i++)
     list[i] = (float)rand()/((float)RAND_MAX/FLT_MAX);
     
-  float *dOld    
+  float *dOld
+  int tpb = 128;
     
 	// Alloc space on the device.
 	// Is this the right amount?
 	checkCudaCall(cudaMalloc((void **) &dOld, length * sizeof(float)));
 	
-	// Copy from main mem to device mem. TODO alloc right amount
-	checkCudaCall(cudaMemcpy(dOld, hOld, i_max*sizeof(float), cudaMemcpyHostToDevice));
-	
 	// TODO make the right call
-  maxKernel<<<(int) ceil((double) i_max / (double) tpb), tpb>>>(i_max, dOld, dCur, dNext);
-	
-	// Copy back the result from device mem to main mem. TODO copy right amount back
-	checkCudaCall(cudaMemcpy(hCur, dCur, i_max * sizeof(float), cudaMemcpyDeviceToHost));
+  maxKernel<<<(int) ceil((double) length / (double) tpb), tpb>>>();
 	
 	// Free device mem.
 	checkCudaCall(cudaFree(dOld));
