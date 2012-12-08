@@ -1,0 +1,159 @@
+\documentclass[a4paper]{article}
+\usepackage{caption}
+\usepackage{fancyhdr}
+\usepackage[usenames, dvipsnames]{xcolor}
+\usepackage{graphicx,hyperref,amsmath,float,subfigure,soul}
+\usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry}
+\hypersetup{
+	colorlinks,
+	citecolor=black,
+	filecolor=black,
+	linkcolor=black,
+	urlcolor=black
+}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\pagestyle{fancy}
+\lfoot{\small \color{gray}Tom Peerdeman - 10266186}
+\cfoot{\thepage}
+\rfoot{\small \color{gray}Ren\'e Aparicio Sa\'ez - 10214054}
+\lhead{\small \color{gray} CUDA}
+\begin{document}
+	\begin{titlepage}
+	\begin{center}
+		\textsc{\Large Concurrency \& Parallel Programming}\\[0.5cm]
+		\HRule \\[0,4cm]
+		\textsc{\huge \bfseries CUDA}
+		\HRule \\[8cm]
+		\begin{minipage}{0.4\textwidth}
+			\begin{flushleft}\large
+				\emph{Auteurs: Tom Peerdeman \& Ren\'e Aparicio Saez}\\
+			\end{flushleft}
+		\end{minipage}
+		\begin{minipage}{0.4\textwidth}
+			\begin{flushright}\large
+			\emph{Datum: 08-12-2012\\\hspace{1cm}}\\
+			\end{flushright}
+		\end{minipage}
+	\end{center}
+	\end{titlepage}
+
+\section{Assignment 6.1 - Wave simulation}
+  
+	\section{Results}
+		
+		
+		\begin{table}[H]
+			\label{table:i_change_1000}
+			\caption{Calculation times of the CUDA driven wave simulation in ms using a t\_max of 1000.}
+			\begin{center}
+				\begin{tabular}{| c | c | c | c | c |}
+					\hline
+					\multicolumn{5}{|l|}{t\_max = 1000, 512 threads per block}\\
+					\hline
+					i=1e3 & i=1e4 & i=1e5 & i=1e6 & i=1e7\\ 
+					\hline
+					4,95 & 5,05 & 4,94 & 3,36 & 3,32\\ 
+					\hline
+					3,41 & 3,57 & 3,32 & 3,35 & 3,31\\ 
+					\hline
+					3,42 & 3,54 & 3,34 & 3,36 & 3,3\\ 
+					\hline
+					4,91 & 5,05 & 3,24 & 3,35 & 3,31\\ 
+					\hline
+					3,49 & 3,47 & 3,3 & 3,37 & 3,3\\ 
+					\hline
+					4,91 & 3,49 & 3,34 & 3,36 & 3,31\\ 
+					\hline
+					4,91 & 3,5 & 4,89 & 3,41 & 3,32\\ 
+					\hline
+					4,93 & 5,02 & 4,94 & 3,37 & 3,3\\ 
+					\hline
+					3,46 & 5,06 & 4,95 & 3,38 & 3,31\\ 
+					\hline
+					4,93 & 5,01 & 4,92 & 3,34 & 3,3\\ 
+					\hline
+					\multicolumn{5}{|l|}{Average over 10 runs:}\\
+					\hline
+					4,332 & 4,276 & 4,118 & 3,365 & 3,308\\ 
+					\hline
+				\end{tabular}
+			\end{center}
+		\end{table}
+		
+		\begin{table}[H]
+			\label{table:i_change_100}
+			\caption{Calculation times of the CUDA driven wave simulation in $\mu$s using a t\_max of 100.}
+			\begin{center}
+				\begin{tabular}{| c | c | c | c | c |}
+					\hline
+					\multicolumn{5}{|l|}{t\_max = 100, 512 threads per block}\\
+					\hline
+					i=1e3 & i=1e4 & i=1e5 & i=1e6 & i=1e7\\ 
+					\hline
+					529 & 555 & 374 & 392 & 399\\ 
+					\hline
+					391 & 383 & 373 & 397 & 406\\ 
+					\hline
+					534 & 554 & 367 & 405 & 396\\ 
+					\hline
+					530 & 397 & 541 & 391 & 574\\ 
+					\hline
+					539 & 540 & 542 & 403 & 395\\ 
+					\hline
+					388 & 395 & 373 & 396 & 383\\ 
+					\hline
+					538 & 384 & 542 & 404 & 383\\ 
+					\hline
+					379 & 387 & 538 & 396 & 399\\ 
+					\hline
+					382 & 554 & 379 & 395 & 392\\ 
+					\hline
+					527 & 545 & 375 & 590 & 386\\ 
+					\hline
+					\multicolumn{5}{|l|}{Average over 10 runs:}\\
+					\hline
+					473,7 & 469,4 & 440,4 & 416,9 & 411,3\\ 
+					\hline
+				\end{tabular}
+			\end{center}
+		\end{table}
+		
+	\subsection{Speed comparison}
+	
+		\begin{table}[H]
+			\label{table:speed_comparison}
+			\caption{Speed comparison between pthreads, MPI, openMP and CUDA, t\_max = 1000, i\_max = 1e6.}
+			\begin{center}
+				\begin{tabular}{| l | c | c |}
+					\hline
+					Method & Average time (ms) & CUDA speedup\\
+					\hline
+					CUDA - 512 threads per block & 3.365 & 1.0\\
+					\hline
+					MPI - 8 nodes with 8 processes each & 120.140 & 35.703\\
+					\hline
+					MPI - 8 nodes with 1 process each & 495.634 & 147.291\\
+					\hline
+					OpenMP - 8 threads - static scheduler & 661.320 & 196.529\\
+					\hline
+					pThreads - 8 threads & 677.751 & 201.412\\
+					\hline
+					MPI - 1 node 8 processes & 1186.726 & 352.667\\
+					\hline
+					pThreads - 1 thread / Sequential & 3788.914 & 1125.977\\
+					\hline
+				\end{tabular}
+			\end{center}
+		\end{table}
+	
+	
+	
+	\subsection{Block sizes}
+	
+	\subsection{Results comparison}
+	
+	
+
+\section{Assignment 6.2 - Parallel reduction}
+
+\end{document}
