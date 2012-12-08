@@ -1,11 +1,9 @@
 #include <math.h>
-//#include <cstdio>
-//#include <cstdlib>
+#include <cstdio>
+#include <cstdlib>
 #include <string.h>
-#include <time.h>
-#include <float.h>
 
-//#include "cuda_max.h"
+#include "cuda_max.h"
 
 int main(int argc, char **argv){
 	if(argc < 2){
@@ -18,9 +16,9 @@ int main(int argc, char **argv){
 	  return 1;
 	}
 	
-	/*
+	
   ret = computeWaveCuda(input);
   printf("The maximum value found is: %lf",ret);
-  */
+  
   return 0;
 }
