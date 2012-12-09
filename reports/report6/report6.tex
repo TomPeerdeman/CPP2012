@@ -40,7 +40,15 @@
 \section{Assignment 6.1 - Wave simulation}
   
 	\subsection{Results}
-		
+		In table \ref{table:i_change_1000} we can see the results of 10 runs with different i\_max settings and a t\_max of 1000.
+		In previous experiments we discarded the highest and lowest value, this is not realy useful in these test series since the test results are too close to each other.\\
+		\\
+		We can see from the average value's in the table that the increase in calculation point leads to a decreased average run time.
+		This is a suprising result, since we would expect that more calculations leads to a longer execution time.
+		The decrease in time could be caused by better utilizing the GPU's recources.
+		A GPU works best if it has multiple threads scheduled for one ALU, in the case of multiple threads it can swith very fast between threads and pipeline the instruction's.
+		If we would have just one thread per ALU, the threadss instruction's would be scheduled as well, but when a dependency exists a lot of no-op instruction's have to be inserted.
+		With multiple threads these no-op instructions could be replaced by useful instructions of other threads.
 		
 		\begin{table}[H]
 			\label{table:i_change_1000}
@@ -80,6 +88,15 @@
 			\end{center}
 		\end{table}
 		
+		Since all the buffers have to be rotated after each time step all the calculating threads have to synchronize after each time step.
+		We could therefore say that the timesteps are calculated sequentially.
+		If we would decrease the amount of time steps by a factor of 10, we would expext a time that is 10 times lower.
+		In table \ref{table:i_change_100} the reduction by a factor 10 is executed.
+		We can see that the increase of time is not 10, also the speed increase decreases with a larger i\_max.
+		The decrease in speed increase can be explained by the discovery we made in the begin: more calculation points gives a smaller caluclation time.
+		The increase not being 10 could be explained ...
+		
+		
 		\begin{table}[H]
 			\label{table:i_change_100}
 			\caption{Calculation times of the CUDA driven wave simulation in $\mu$s using a t\_max of 100.}
@@ -113,6 +130,10 @@
 					\multicolumn{5}{|l|}{Average over 10 runs:}\\
 					\hline
 					473,7 & 469,4 & 440,4 & 416,9 & 411,3\\ 
+					\hline
+					\multicolumn{5}{|l|}{Speed increase vs t\_max = 1000:}\\
+					\hline
+					9.15 & 9.11 & 9.35 & 8.07 & 8.04\\
 					\hline
 				\end{tabular}
 			\end{center}
