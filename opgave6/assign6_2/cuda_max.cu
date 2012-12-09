@@ -42,7 +42,7 @@ __device__ int NearestPowerOf2(int n)
 __global__ void maxKernel(const int block_size) {
   int  thread2;
   float temp;
-  __shared__ float max[block_size];
+  extern __shared__ float max[];
    
   int nTotalThreads = NearestPowerOf2(blockDim.x);	// Total number of threads, rounded up to the next power of two
    
@@ -72,13 +72,13 @@ __global__ void maxKernel(const int block_size) {
 }
 
 // TODO create working compute function that returns the max value of an array
-float *computeMaxCuda(int length, const int block_size, int tpb){
+float *computeMaxCuda(int length, int block_size, int tpb){
     
   float* d_list = NULL;
   float* d_max = NULL;
   float* maxVal = NULL;
   float list[length];
-  
+  int max_size = block_size
   srand(time(NULL));
   //TODO make this run in parallel
   //printfs, so test with small length!
@@ -92,7 +92,7 @@ float *computeMaxCuda(int length, const int block_size, int tpb){
 	checkCudaCall(cudaMalloc((void **) &d_list, length * sizeof(float)));
 	checkCudaCall(cudaMalloc((void **) &d_max, sizeof(float)));
 	
-  maxKernel<<<block_size, tpb>>>(block_size);
+  maxKernel<<<block_size, tpb, max_size>>>(block_size);
   printf("max value?: %lf", max[0]);
   // copy resulting max back to main memory
   checkCudaCall(cudaMemcpy(maxVal, d_max, sizeof(float), cudaMemcpyDeviceToHost));

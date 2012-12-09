@@ -21,7 +21,7 @@ int main(int argc, char **argv){
 	  printf("The amount of threads per block must be a number!\n");
 	  return 1;
 	}
-	const int block_size = (int) ceil((double) length / (double) tpb);
+	int block_size = (int) ceil((double) length / (double) tpb);
 	
   ret = computeWaveCuda(input, block_size, tpb);
   printf("The maximum value found is: %lf",ret);
