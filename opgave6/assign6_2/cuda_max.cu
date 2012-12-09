@@ -42,7 +42,7 @@ __device__ int NearestPowerOf2(int n)
 __global__ void maxKernel(const int block_size) {
   int  thread2;
   float temp;
-  extern __shared__ float max[];
+  extern __shared__ float maxList[];
    
   int nTotalThreads = NearestPowerOf2(blockDim.x);	// Total number of threads, rounded up to the next power of two
    
@@ -59,9 +59,9 @@ __global__ void maxKernel(const int block_size) {
      if (thread2 < blockDim.x)
        {
    
-        temp = max[thread2];
-        if (temp > max[threadIdx.x]) 
-           max[threadIdx.x] = temp;
+        temp = maxList[thread2];
+        if (temp > maxList[threadIdx.x]) 
+           maxList[threadIdx.x] = temp;
        }
     }
     __syncthreads();
@@ -78,7 +78,7 @@ float *computeMaxCuda(int length, int block_size, int tpb){
   float* d_max = NULL;
   float* maxVal = NULL;
   float list[length];
-  int max_size = block_size
+  int maxList_size = block_size;
   srand(time(NULL));
   //TODO make this run in parallel
   //printfs, so test with small length!
@@ -92,7 +92,7 @@ float *computeMaxCuda(int length, int block_size, int tpb){
 	checkCudaCall(cudaMalloc((void **) &d_list, length * sizeof(float)));
 	checkCudaCall(cudaMalloc((void **) &d_max, sizeof(float)));
 	
-  maxKernel<<<block_size, tpb, max_size>>>(block_size);
+  maxKernel<<<block_size, tpb, max_maxList>>>(block_size);
   printf("max value?: %lf", max[0]);
   // copy resulting max back to main memory
   checkCudaCall(cudaMemcpy(maxVal, d_max, sizeof(float), cudaMemcpyDeviceToHost));
