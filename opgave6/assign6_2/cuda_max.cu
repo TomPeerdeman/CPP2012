@@ -92,7 +92,7 @@ float *computeMaxCuda(int length){
 	
 	// TODO make the right call
   maxKernel<<<(int) ceil((double) length / (double) tpb), tpb>>>();
-
+  printf("max value?: %lf", max[0]);
   // copy resulting max back to main memory
   checkCudaCall(cudaMemcpy(maxVal, d_max, sizeof(float), cudaMemcpyDeviceToHost));
 
