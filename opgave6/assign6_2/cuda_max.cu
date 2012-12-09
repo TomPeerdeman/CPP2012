@@ -25,11 +25,50 @@ static void checkCudaCall(cudaError_t result) {
     }
 }
 
+__device__ int NearestPowerOf2(int n)
+{
+  if (!n) return n;  //(0 == 2^0)
+ 
+  int x = 1;
+  while(x < n)
+    {
+      x <<= 1;
+    }
+  return x;
+}
 
-// TODO create some function that adds values.
+
+// standard binary tree reduction cude method
 __global__ void maxKernel() {
-    unsigned i = blockIdx.x * blockDim.x + threadIdx.x;
-	
+  int  thread2;
+  float temp;
+  __shared__ float max[BLOCK_SIZE];
+   
+  int nTotalThreads = NearestPowerOf2(blockDim.x);	// Total number of threads, rounded up to the next power of two
+   
+  while(nTotalThreads > 1)
+  {
+    int halfPoint = (nTotalThreads >> 1);	// divide by two
+    // only the first half of the threads will be active.
+   
+    if (threadIdx.x < halfPoint)
+    {
+     thread2 = threadIdx.x + halfPoint;
+   
+     // Skipping the fictious threads blockDim.x ... blockDim_2-1
+     if (thread2 < blockDim.x)
+       {
+   
+        temp = max[thread2];
+        if (temp > max[threadIdx.x]) 
+           max[threadIdx.x] = temp;
+       }
+    }
+    __syncthreads();
+   
+    // Reducing the binary tree size by two:
+    nTotalThreads = halfPoint;
+  }
 }
 
 // TODO create working compute function that returns the max value of an array
