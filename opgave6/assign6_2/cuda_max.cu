@@ -32,26 +32,34 @@ __global__ void maxKernel() {
 	
 }
 
-// TODO create compute function that returns the max value of an array
+// TODO create working compute function that returns the max value of an array
 float *computeMaxCuda(int length){
-  srand(time(NULL));
+    
+  float* d_list = NULL;
+  float* d_max = NULL;
+  float* maxVal = NULL;
+  int tpb = 128;
   float list[length];
+  
+  srand(time(NULL));
   //TODO make this run in parallel
   for(int i = 0; i< length); i++)
     list[i] = (float)rand()/((float)RAND_MAX/FLT_MAX);
-    
-  float *dOld
-  int tpb = 128;
-    
+  
 	// Alloc space on the device.
 	// Is this the right amount?
-	checkCudaCall(cudaMalloc((void **) &dOld, length * sizeof(float)));
+	checkCudaCall(cudaMalloc((void **) &d_list, length * sizeof(float)));
+	checkCudaCall(cudaMalloc((void **) &d_max, sizeof(float)));
 	
 	// TODO make the right call
   maxKernel<<<(int) ceil((double) length / (double) tpb), tpb>>>();
-	
+
+  // copy resulting max back to main memory
+  checkCudaCall(cudaMemcpy(maxVal, d_max, sizeof(float), cudaMemcpyDeviceToHost));
+
 	// Free device mem.
-	checkCudaCall(cudaFree(dOld));
+	checkCudaCall(cudaFree(d_list));
+	checkCudaCall(cudaFree(d_max));
 	
 	return maxVal;
 }
