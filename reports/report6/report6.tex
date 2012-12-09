@@ -39,7 +39,7 @@
 
 \section{Assignment 6.1 - Wave simulation}
   
-	\section{Results}
+	\subsection{Results}
 		
 		
 		\begin{table}[H]
@@ -119,9 +119,21 @@
 		\end{table}
 		
 	\subsection{Speed comparison}
-	
+		If we compare our CUDA implementation to the previous implementations based on Threads, MPI and openMP, we can see in table \ref{table:speedComparison} that out CUDA implementation is by far the fastest.
+		This result isn't suprising, the GTX 480 used has 15 SM units.
+		Each of this SM units contain 32 ALU's, so in theory we can run 15 * 32 = 480 threads at the same time.
+		The next fastest is the MPI implementation with 8 nodes running each 8 processes, this counts up as 64 processes/threads.
+		Lets say this implementation scales up perfectly by time, so if we use 7.5 times more threads/processes the time would be 7.5 times lower.
+		The implementation would use 480 threads/processes then and the time would be 16.0187 ms.
+		This time would still be almost 5 times slower than the CUDA implementation, while using the same amount of threads.\\
+		\\
+		The sequential implementation in table \ref{table:speedComparison} is given by the pThreads implementation using 1 thread.
+		This method is truly sequential since it is executed by 1 thread, but the timing also counts some overhead given by the pThreads.
+		Given this we should keep in mind that a pure sequential implementation would be slightly faster than the given time under sequential in table \ref{table:speedComparison}.
+		Keeping this in mind, we see that the CUDA implementation is over a thousand times faster than the (almost) sequential implementation.
+		
 		\begin{table}[H]
-			\label{table:speed_comparison}
+			\label{table:speedComparison}
 			\caption{Speed comparison between pthreads, MPI, openMP and CUDA, t\_max = 1000, i\_max = 1e6.}
 			\begin{center}
 				\begin{tabular}{| l | c | c |}
