@@ -38,11 +38,11 @@ __device__ int NearestPowerOf2(int n)
 }
 
 
-// standard binary tree reduction cude method
-__global__ void maxKernel() {
+// standard binary tree reduction cuda method
+__global__ void maxKernel(int length) {
   int  thread2;
   float temp;
-  __shared__ float max[BLOCK_SIZE];
+  __shared__ float max[length];
    
   int nTotalThreads = NearestPowerOf2(blockDim.x);	// Total number of threads, rounded up to the next power of two
    
@@ -82,16 +82,19 @@ float *computeMaxCuda(int length){
   
   srand(time(NULL));
   //TODO make this run in parallel
-  for(int i = 0; i< length); i++)
+  //printfs, so test with small length!
+  for(int i = 0; i< length; i++){
     list[i] = (float)rand()/((float)RAND_MAX/FLT_MAX);
+    printf("%d). %lf\n",i,list[i]);
+  }
   
 	// Alloc space on the device.
 	// Is this the right amount?
 	checkCudaCall(cudaMalloc((void **) &d_list, length * sizeof(float)));
 	checkCudaCall(cudaMalloc((void **) &d_max, sizeof(float)));
 	
-	// TODO make the right call
-  maxKernel<<<(int) ceil((double) length / (double) tpb), tpb>>>();
+	// length as block_size? 
+  maxKernel<<<(int) ceil((double) length / (double) tpb), tpb>>>(length);
   printf("max value?: %lf", max[0]);
   // copy resulting max back to main memory
   checkCudaCall(cudaMemcpy(maxVal, d_max, sizeof(float), cudaMemcpyDeviceToHost));
