@@ -14,7 +14,7 @@ CU_PTX		= $(CU_SOURCES:%.cu=%.ptx)
 CC_OBJECTS	= $(CC_SOURCES:%.cc=%.o)
 
 PROG		= assign6_2
-RUN_FLAGS 	= 1000000 1000 sinfull
+RUN_FLAGS 	= 10 32
 
 %.o: %.cu
 	$(NVCC) $(CU_FLAGS) -c $< -o $@
