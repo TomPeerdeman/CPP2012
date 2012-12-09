@@ -39,10 +39,10 @@ __device__ int NearestPowerOf2(int n)
 
 
 // standard binary tree reduction cuda method
-__global__ void maxKernel(int length) {
+__global__ void maxKernel(const int block_size) {
   int  thread2;
   float temp;
-  __shared__ float max[length];
+  __shared__ float max[block_size];
    
   int nTotalThreads = NearestPowerOf2(blockDim.x);	// Total number of threads, rounded up to the next power of two
    
@@ -72,12 +72,11 @@ __global__ void maxKernel(int length) {
 }
 
 // TODO create working compute function that returns the max value of an array
-float *computeMaxCuda(int length){
+float *computeMaxCuda(int length, const int block_size, int tpb){
     
   float* d_list = NULL;
   float* d_max = NULL;
   float* maxVal = NULL;
-  int tpb = 128;
   float list[length];
   
   srand(time(NULL));
@@ -93,8 +92,7 @@ float *computeMaxCuda(int length){
 	checkCudaCall(cudaMalloc((void **) &d_list, length * sizeof(float)));
 	checkCudaCall(cudaMalloc((void **) &d_max, sizeof(float)));
 	
-	// length as block_size? 
-  maxKernel<<<(int) ceil((double) length / (double) tpb), tpb>>>(length);
+  maxKernel<<<block_size, tpb>>>(block_size);
   printf("max value?: %lf", max[0]);
   // copy resulting max back to main memory
   checkCudaCall(cudaMemcpy(maxVal, d_max, sizeof(float), cudaMemcpyDeviceToHost));
