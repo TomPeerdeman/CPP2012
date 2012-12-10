@@ -186,7 +186,7 @@
 		Running a program using CUDA requires to pass the amount of threads per block into the program, in the wave simulation the number of blocks also depends on the number of threads per block.
 		In table \ref{table:blockSizes} the wave simulation was ran using different amounts of threads per block.
 		As we can see the amount of threads does not influence the calculation time.
-		All the result do not differentiate much from each other, certainly if we consider some margin of error in the results.
+		All the result do not differentiate much from each other, certainly not if we consider some margin of error in the results.
 	
 		\begin{table}[H]
 			\caption{Calculation times of the CUDA driven wave simulation using different amounts of threads per block.}
@@ -226,7 +226,41 @@
 		
 	
 	\subsection{Results comparison}
-	
+		In figure \ref{fig:1000MPI} we can see the result of the wave simulation using the MPI implementation.
+		If we compare this figure to the CUDA result in figure \ref{fig:1000CUDA} we see that they don't differ very much.
+		\begin{figure}[H]
+			\begin{center}
+				\includegraphics[scale=0.5]{1000MPI}
+			\end{center}
+			\caption{Result of running the wave simulation using MPI with i\_max = 1000 and t\_max = 100.}
+			\label{fig:1000MPI}
+		\end{figure}
+		
+		\begin{figure}[H]
+			\begin{center}
+				\includegraphics[scale=0.5]{1000CUDA}
+			\end{center}
+			\caption{Result of running the wave simulation using CUDA with i\_max = 1000 and t\_max = 100.}
+			\label{fig:1000CUDA}
+		\end{figure}
+		
+		\noindent The difference of results are therefore plotted in figure \ref{fig:resultsDiff}.
+		We can see that the only differences lies in the begin and the end of the data.
+		
+		\begin{figure}[H]
+			\begin{center}
+				\includegraphics[scale=0.5]{results_diff}
+			\end{center}
+			\caption{Absolute difference in results of running the wave simulation using MPI and CUDA with i\_max = 1000 and t\_max = 100.}
+			\label{fig:resultsDiff}
+		\end{figure}
+		
+		\noindent These differences can be explained by the implementation of the handling of the edge values.
+		The MPI implementation fixes the edge value's to zero each time step, the CUDA implementation simply ignores the edge values and doesn't do any calculations on it.
+		The points next to the edge points also utilize the value of the edge points, so these will be different in the CUDA and MPI implementation.
+		This error propagates to the next time step where the next to the next edge value is affected, this leads to the triangle shape from the edges.
+		
+
 	
 
 \section{Assignment 6.2 - Parallel reduction}
