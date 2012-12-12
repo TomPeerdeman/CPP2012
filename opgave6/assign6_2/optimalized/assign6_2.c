@@ -21,7 +21,7 @@ srand(time(NULL));
     return 1;
   }
   
-  int tpb = 1024
+  int tpb = 1024;
   
   float list[length];
   
@@ -33,7 +33,6 @@ srand(time(NULL));
   // make a list of floats
   for(int i = 0; i< length; i++){
     list[i] = (float)rand()/((float)RAND_MAX/FLT_MAX);
-	printf("List[%d]: %f\n", i, list[i]);
   }
   
   float maxSeq = computeMaxSeq(length, list);

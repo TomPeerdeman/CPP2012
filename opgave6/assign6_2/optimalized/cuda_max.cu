@@ -41,7 +41,7 @@ __device__ int NearestPowerOf2(int n)
 
 // standard binary tree reduction cuda method
 __global__ void maxKernel(int length, float *list, float *max) {
-  extern __shared__ float sharedList[blockDim.x];
+  extern __shared__ float sharedList[];
   
   // Global means the position in the list
   int globalIdx1;
