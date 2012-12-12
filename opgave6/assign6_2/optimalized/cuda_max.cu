@@ -112,7 +112,7 @@ float computeMaxCuda(int length, int block_size, int tpb, float* list){
   maxKernel<<<block_size, tpb, tpb * sizeof(float)>>>(length, d_list, d_max);
   
   // Calculate the max of the max list, put the result in d_list[0]
-  maxKernel<<<1, block_size, sizeof(float)>>>(block_size, d_max, d_list);
+  maxKernel<<<1, block_size, block_size * sizeof(float)>>>(block_size, d_max, d_list);
   
   // stop time
   maxTimer.stop();
