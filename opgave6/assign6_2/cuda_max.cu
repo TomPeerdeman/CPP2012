@@ -103,9 +103,6 @@ float computeMaxCuda(int length, int block_size, int tpb, float* list){
   checkCudaCall(cudaFree(d_list));
   checkCudaCall(cudaFree(d_max));
   
-  // return maximum value to user
-  printf("\nThe maximum value found is: %lf\n",list[0]);
-  
   // show time needed for the calculation
   cout << maxTimer;
   
