@@ -1,6 +1,7 @@
 #include <math.h>
 #include <cstdio>
 #include <float.h>
+#include <time.h>
 #include <cstdlib>
 #include <string.h>
 
@@ -8,6 +9,8 @@
 #include "seq_max.h"
 
 int main(int argc, char **argv){
+srand(time(NULL));
+
   if(argc < 3){
     printf("Usage: %s <number of floats in the list> <Threads per block>\n", argv[0]);
     return 1;
@@ -32,10 +35,11 @@ int main(int argc, char **argv){
     list[i] = (float)rand()/((float)RAND_MAX/FLT_MAX);
   }
   
-  float maxCUDA = computeMaxCuda(length, block_size, tpb, list);  
-  printf("CUDA max: %f\n", maxCUDA);
   float maxSeq = computeMaxSeq(length, list);
   printf("Seq max: %f\n", maxSeq);
+  float maxCUDA = computeMaxCuda(length, block_size, tpb, list);  
+  printf("CUDA max: %f\n", maxCUDA);
+
   
   printf("Difference seq/CUDA: %f\n", (maxSeq - maxCUDA));
   return 0;

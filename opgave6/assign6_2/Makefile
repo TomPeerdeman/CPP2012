@@ -7,7 +7,7 @@ CC_FLAGS	= -O3 -m64 -Wall
 #~ CC_FLAGS	= -O3 -Wall
 
 CU_SOURCES	= cuda_max.cu
-CC_SOURCES	= assign6_2.cc timer.cc
+CC_SOURCES	= assign6_2.cc timer.cc seq_max.cc
 
 CU_OBJECTS	= $(CU_SOURCES:%.cu=%.o)
 CU_PTX		= $(CU_SOURCES:%.cu=%.ptx)
