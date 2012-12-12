@@ -6,6 +6,8 @@
 #include <float.h>
 #include <iostream>
 
+#include "timer.h"
+
 using namespace std;
 
 /* Utility function, use to do error checking.
@@ -28,7 +30,7 @@ static void checkCudaCall(cudaError_t result) {
 __device__ int NearestPowerOf2(int n)
 {
   if (!n) return n;  //(0 == 2^0)
- 
+
   int x = 1;
   while(x < n)
     {
@@ -39,67 +41,80 @@ __device__ int NearestPowerOf2(int n)
 
 
 // standard binary tree reduction cuda method
-__global__ void maxKernel(const int block_size) {
+__global__ void maxKernel(float* maxList) {
   int  thread2;
   float temp;
-  extern __shared__ float maxList[];
-   
-  int nTotalThreads = NearestPowerOf2(blockDim.x);	// Total number of threads, rounded up to the next power of two
-   
+
+  // calculate number of threads needed in the first iteration
+  int nTotalThreads = NearestPowerOf2(blockDim.x);
+
   while(nTotalThreads > 1)
   {
-    int halfPoint = (nTotalThreads >> 1);	// divide by two
-    // only the first half of the threads will be active.
-   
-    if (threadIdx.x < halfPoint)
-    {
-     thread2 = threadIdx.x + halfPoint;
-   
-     // Skipping the fictious threads blockDim.x ... blockDim_2-1
-     if (thread2 < blockDim.x)
-       {
-   
+    // we only need the first half of the array, we compare with the other half.
+    int halfPoint = nTotalThreads / 2;
+
+    // see if i am in the first half
+    if (threadIdx.x < halfPoint){
+      // i have to compare with the second half of the array,
+      // my id + half the length of the remaining list
+      thread2 = threadIdx.x + halfPoint;
+
+      // only work in the same block?
+      if (thread2 < blockDim.x){
+
         temp = maxList[thread2];
-        if (temp > maxList[threadIdx.x]) 
+        // the highest value goes to the front part of the remaining list.
+        if (temp > maxList[threadIdx.x])
            maxList[threadIdx.x] = temp;
-       }
+      }
     }
     __syncthreads();
+
    
-    // Reducing the binary tree size by two:
+    // next iteration will be done with half the length we had before.
     nTotalThreads = halfPoint;
   }
 }
 
-// TODO create working compute function that returns the max value of an array
-float *computeMaxCuda(int length, int block_size, int tpb){
-    
+float computeMaxCuda(int length, int block_size, int tpb){
+
   float* d_list = NULL;
   float* d_max = NULL;
-  float* maxVal = NULL;
   float list[length];
-  int maxList_size = block_size;
+  timer maxTimer("Max timer");
   srand(time(NULL));
-  //TODO make this run in parallel
-  //printfs, so test with small length!
+
+  // make a list of floats
   for(int i = 0; i< length; i++){
     list[i] = (float)rand()/((float)RAND_MAX/FLT_MAX);
-    printf("%d). %lf\n",i,list[i]);
   }
   
-	// Alloc space on the device.
-	// Is this the right amount?
-	checkCudaCall(cudaMalloc((void **) &d_list, length * sizeof(float)));
-	checkCudaCall(cudaMalloc((void **) &d_max, sizeof(float)));
-	
-  maxKernel<<<block_size, tpb, max_maxList>>>(block_size);
-  printf("max value?: %lf", max[0]);
-  // copy resulting max back to main memory
-  checkCudaCall(cudaMemcpy(maxVal, d_max, sizeof(float), cudaMemcpyDeviceToHost));
+  // Alloc space on the device.
+  checkCudaCall(cudaMalloc((void **) &d_list, length * sizeof(float)));
+  checkCudaCall(cudaMalloc((void **) &d_max, sizeof(float)));
+  // copy memory to device for parallelism
+  checkCudaCall(cudaMemcpy(d_list, list, length*sizeof(float), cudaMemcpyHostToDevice));
 
-	// Free device mem.
-	checkCudaCall(cudaFree(d_list));
-	checkCudaCall(cudaFree(d_max));
-	
-	return maxVal;
+  // start timer (only time the calculation of the max value,
+  // including the list will make the time increase.
+  maxTimer.start();
+  
+  // preform CUDA parallelism
+  maxKernel<<<block_size,tpb>>>(d_list);
+  
+  // stop time
+  maxTimer.stop();
+  
+  cout << maxTimer;
+    
+  // copy memory back from device
+  checkCudaCall(cudaMemcpy(list, d_list, sizeof(float)*length, cudaMemcpyDeviceToHost));
+
+  // Free device mem.
+  checkCudaCall(cudaFree(d_list));
+  checkCudaCall(cudaFree(d_max)); 
+  
+  // return maximum value
+  return list[0];
 }
+
