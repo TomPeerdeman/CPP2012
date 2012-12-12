@@ -30,6 +30,10 @@ srand(time(NULL));
   float list[length];
   
   int block_size = (int) ceil((double) length / (double) tpb);
+  if(block_size > 1024){
+    printf("I cannot compute this in parallel!\nToo many items in the list");
+    exit(0);
+  }
   // make a list of floats
   for(int i = 0; i< length; i++){
     list[i] = (float)rand()/((float)RAND_MAX/FLT_MAX);
