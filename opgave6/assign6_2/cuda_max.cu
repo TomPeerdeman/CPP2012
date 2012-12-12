@@ -76,7 +76,7 @@ __global__ void maxKernel(float* maxList) {
   }
 }
 
-void computeMaxCuda(int length, int block_size, int tpb, float* list){
+float computeMaxCuda(int length, int block_size, int tpb, float* list){
   float* d_list = NULL;
   float* d_max = NULL;
   timer maxTimer("Max timer");
@@ -110,5 +110,8 @@ void computeMaxCuda(int length, int block_size, int tpb, float* list){
   
   // show time needed for the calculation
   cout << maxTimer;
+  
+  // return value for comparison later
+  return list[0];
 }
 
