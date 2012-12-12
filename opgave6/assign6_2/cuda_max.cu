@@ -104,18 +104,18 @@ void computeMaxCuda(int length, int block_size, int tpb){
   
   // stop time
   maxTimer.stop();
-  
-  // return maximum value to user
-  printf("\nThe maximum value found is: %lf\n",list[0]);
-  
-  // show time needed for the calculation
-  cout << maxTimer;
     
   // copy memory back from device
   checkCudaCall(cudaMemcpy(list, d_list, sizeof(float)*length, cudaMemcpyDeviceToHost));
 
   // Free device mem.
   checkCudaCall(cudaFree(d_list));
-  checkCudaCall(cudaFree(d_max)); 
+  checkCudaCall(cudaFree(d_max));
+  
+  // return maximum value to user
+  printf("\nThe maximum value found is: %lf\n",list[0]);
+  
+  // show time needed for the calculation
+  cout << maxTimer;
 }
 
