@@ -76,7 +76,7 @@ __global__ void maxKernel(float* maxList) {
   }
 }
 
-float computeMaxCuda(int length, int block_size, int tpb){
+void computeMaxCuda(int length, int block_size, int tpb){
 
   float* d_list = NULL;
   float* d_max = NULL;
@@ -105,6 +105,10 @@ float computeMaxCuda(int length, int block_size, int tpb){
   // stop time
   maxTimer.stop();
   
+  // return maximum value to user
+  printf("\nThe maximum value found is: %lf\n",list[0]);
+  
+  // show time needed for the calculation
   cout << maxTimer;
     
   // copy memory back from device
@@ -113,8 +117,5 @@ float computeMaxCuda(int length, int block_size, int tpb){
   // Free device mem.
   checkCudaCall(cudaFree(d_list));
   checkCudaCall(cudaFree(d_max)); 
-  
-  // return maximum value
-  return list[0];
 }
 
