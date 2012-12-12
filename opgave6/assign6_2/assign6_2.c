@@ -11,8 +11,8 @@
 int main(int argc, char **argv){
 srand(time(NULL));
 
-  if(argc < 3){
-    printf("Usage: %s <number of floats in the list> <Threads per block>\n", argv[0]);
+  if(argc < 2){
+    printf("Usage: %s <number of floats in the list>\n", argv[0]);
     return 1;
   }
   int length = atoi(argv[1]);
@@ -21,11 +21,7 @@ srand(time(NULL));
     return 1;
   }
   
-  int tpb = atoi(argv[2]);
-  if(tpb == 0){
-    printf("The amount of threads per block must be a number!\n");
-    return 1;
-  }
+  int tpb = 1024
   
   float list[length];
   
