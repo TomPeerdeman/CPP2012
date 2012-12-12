@@ -1,12 +1,13 @@
 #include <math.h>
 #include <cstdio>
+#include <float.h>
 #include <cstdlib>
 #include <string.h>
 
 #include "cuda_max.h"
+#include "seq_max.h"
 
 int main(int argc, char **argv){
-  float* list;
   if(argc < 3){
     printf("Usage: %s <number of floats in the list> <Threads per block>\n", argv[0]);
     return 1;
@@ -22,11 +23,20 @@ int main(int argc, char **argv){
     printf("The amount of threads per block must be a number!\n");
     return 1;
   }
+  
+  float list[length];
+  
   int block_size = (int) ceil((double) length / (double) tpb);
   // make a list of floats
   for(int i = 0; i< length; i++){
     list[i] = (float)rand()/((float)RAND_MAX/FLT_MAX);
   }
-  computeMaxCuda(length, block_size, tpb, list);  
+  
+  float maxCUDA = computeMaxCuda(length, block_size, tpb, list);  
+  printf("CUDA max: %f\n", maxCUDA);
+  float maxSeq = computeMaxSeq(length, list);
+  printf("Seq max: %f\n", maxSeq);
+  
+  printf("Difference seq/CUDA: %f\n", (maxSeq - maxCUDA));
   return 0;
 }
