@@ -6,6 +6,7 @@
 #include "cuda_max.h"
 
 int main(int argc, char **argv){
+  float* list;
   if(argc < 3){
     printf("Usage: %s <number of floats in the list> <Threads per block>\n", argv[0]);
     return 1;
@@ -22,7 +23,10 @@ int main(int argc, char **argv){
     return 1;
   }
   int block_size = (int) ceil((double) length / (double) tpb);
-  
-  computeMaxCuda(length, block_size, tpb);  
+  // make a list of floats
+  for(int i = 0; i< length; i++){
+    list[i] = (float)rand()/((float)RAND_MAX/FLT_MAX);
+  }
+  computeMaxCuda(length, block_size, tpb, list);  
   return 0;
 }

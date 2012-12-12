@@ -59,7 +59,7 @@ __global__ void maxKernel(float* maxList) {
       // my id + half the length of the remaining list
       thread2 = threadIdx.x + halfPoint;
 
-      // only work in the same block?
+      // only work in the same block
       if (thread2 < blockDim.x){
 
         temp = maxList[thread2];
@@ -76,19 +76,13 @@ __global__ void maxKernel(float* maxList) {
   }
 }
 
-void computeMaxCuda(int length, int block_size, int tpb){
-
+void computeMaxCuda(int length, int block_size, int tpb, float *list){
   float* d_list = NULL;
   float* d_max = NULL;
   float list[length];
   timer maxTimer("Max timer");
   srand(time(NULL));
 
-  // make a list of floats
-  for(int i = 0; i< length; i++){
-    list[i] = (float)rand()/((float)RAND_MAX/FLT_MAX);
-  }
-  
   // Alloc space on the device.
   checkCudaCall(cudaMalloc((void **) &d_list, length * sizeof(float)));
   checkCudaCall(cudaMalloc((void **) &d_max, sizeof(float)));
