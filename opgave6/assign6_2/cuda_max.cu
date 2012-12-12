@@ -77,15 +77,15 @@ __global__ void maxKernel(int length, float *list, float *max) {
       }
     }
     __syncthreads();
-
-	// The max of this block is placed the local first place of this block
-	if(threadIdx.x == 0){
-		max[blockIdx.x] = list[globalIdx1];
-	}
-   
+	
     // next iteration will be done with half the length we had before.
     nTotalThreads = halfPoint;
   }
+  
+  	// The max of this block is placed the local first place of this block
+	if(threadIdx.x == 0){
+		max[blockIdx.x] = list[globalIdx1];
+	}
   
   //
 }
@@ -106,7 +106,10 @@ float computeMaxCuda(int length, int block_size, int tpb, float* list){
   maxTimer.start();
   
   // preform CUDA parallelism
-  maxKernel<<<block_size,tpb>>>(length, d_list, d_max);
+  maxKernel<<<block_size, tpb>>>(length, d_list, d_max);
+  
+  // Calculate the max of the max list, put the result in d_list[0]
+  maxKernel<<<1, tpb>>>(block_size, d_max, d_list);
   
   // stop time
   maxTimer.stop();
