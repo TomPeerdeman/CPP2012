@@ -76,10 +76,9 @@ __global__ void maxKernel(float* maxList) {
   }
 }
 
-void computeMaxCuda(int length, int block_size, int tpb, float *list){
+void computeMaxCuda(int length, int block_size, int tpb, float* list){
   float* d_list = NULL;
   float* d_max = NULL;
-  float list[length];
   timer maxTimer("Max timer");
   srand(time(NULL));
 
