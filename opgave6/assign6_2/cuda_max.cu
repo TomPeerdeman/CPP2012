@@ -40,39 +40,54 @@ __device__ int NearestPowerOf2(int n)
 
 
 // standard binary tree reduction cuda method
-__global__ void maxKernel(float* maxList) {
-  int  thread2;
+__global__ void maxKernel(int length, float *list, float *max) {
   float temp;
+  
+  // Global means the position in the list
+  int globalIdx1;
+  int globalIdx2;
+  // Local means position within the block
+  int localIdx2;
+  
+  int halfPoint;
 
   // calculate number of threads needed in the first iteration
   int nTotalThreads = NearestPowerOf2(blockDim.x);
 
-  while(nTotalThreads > 1)
-  {
+  while(nTotalThreads > 1){
     // we only need the first half of the array, we compare with the other half.
-    int halfPoint = nTotalThreads / 2;
-
+    halfPoint = nTotalThreads / 2;
+	
+	globalIdx1 = threadIdx.x + blockIdx.x * blockDim.x;
+	
     // see if i am in the first half
     if (threadIdx.x < halfPoint){
       // i have to compare with the second half of the array,
       // my id + half the length of the remaining list
-      thread2 = threadIdx.x + halfPoint;
+      localIdx2 = threadIdx.x + halfPoint;
+	  globalIdx2 = localIdx2 + blockIdx.x * blockDim.x;
 
       // only work in the same block
-      if (thread2 < blockDim.x){
+      if (localIdx2 < blockDim.x && globalIdx2 < length){
 
-        temp = maxList[thread2];
+        temp = list[globalIdx2];
         // the highest value goes to the front part of the remaining list.
-        if (temp > maxList[threadIdx.x])
-           maxList[threadIdx.x] = temp;
+        if (temp > list[globalIdx1])
+           list[globalIdx1] = temp;
       }
     }
     __syncthreads();
 
+	// The max of this block is placed the local first place of this block
+	if(threadIdx.x == 0){
+		max[blockIdx.x] = list[globalIdx1];
+	}
    
     // next iteration will be done with half the length we had before.
     nTotalThreads = halfPoint;
   }
+  
+  //
 }
 
 float computeMaxCuda(int length, int block_size, int tpb, float* list){
@@ -82,7 +97,7 @@ float computeMaxCuda(int length, int block_size, int tpb, float* list){
 
   // Alloc space on the device.
   checkCudaCall(cudaMalloc((void **) &d_list, length * sizeof(float)));
-  checkCudaCall(cudaMalloc((void **) &d_max, sizeof(float)));
+  checkCudaCall(cudaMalloc((void **) &d_max, block_size * sizeof(float)));
   // copy memory to device for parallelism
   checkCudaCall(cudaMemcpy(d_list, list, length*sizeof(float), cudaMemcpyHostToDevice));
 
@@ -91,7 +106,7 @@ float computeMaxCuda(int length, int block_size, int tpb, float* list){
   maxTimer.start();
   
   // preform CUDA parallelism
-  maxKernel<<<block_size,tpb>>>(d_list);
+  maxKernel<<<block_size,tpb>>>(length, d_list, d_max);
   
   // stop time
   maxTimer.stop();

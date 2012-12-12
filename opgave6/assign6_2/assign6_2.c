@@ -33,10 +33,11 @@ srand(time(NULL));
   // make a list of floats
   for(int i = 0; i< length; i++){
     list[i] = (float)rand()/((float)RAND_MAX/FLT_MAX);
+	printf("List[%d]: %f\n", i, list[i]);
   }
   
   float maxSeq = computeMaxSeq(length, list);
-  printf("Seq max: %f\n", maxSeq);
+  printf("Seq max:   %f\n", maxSeq);
   float maxCUDA = computeMaxCuda(length, block_size, tpb, list);  
   printf("CUDA max: %f\n", maxCUDA);
 
