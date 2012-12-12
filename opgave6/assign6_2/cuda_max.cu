@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 #include <float.h>
 #include <iostream>
 
@@ -80,7 +79,6 @@ float computeMaxCuda(int length, int block_size, int tpb, float* list){
   float* d_list = NULL;
   float* d_max = NULL;
   timer maxTimer("Max timer");
-  srand(time(NULL));
 
   // Alloc space on the device.
   checkCudaCall(cudaMalloc((void **) &d_list, length * sizeof(float)));
