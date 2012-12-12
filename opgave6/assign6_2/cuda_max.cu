@@ -53,19 +53,18 @@ __global__ void maxKernel(int length, float *list, float *max) {
 
   // calculate number of threads needed in the first iteration
   int nTotalThreads = NearestPowerOf2(blockDim.x);
+	globalIdx1 = threadIdx.x + blockIdx.x * blockDim.x;
 
   while(nTotalThreads > 1){
     // we only need the first half of the array, we compare with the other half.
     halfPoint = nTotalThreads / 2;
-	
-	globalIdx1 = threadIdx.x + blockIdx.x * blockDim.x;
 	
     // see if i am in the first half
     if (threadIdx.x < halfPoint){
       // i have to compare with the second half of the array,
       // my id + half the length of the remaining list
       localIdx2 = threadIdx.x + halfPoint;
-	  globalIdx2 = localIdx2 + blockIdx.x * blockDim.x;
+      globalIdx2 = localIdx2 + blockIdx.x * blockDim.x;
 
       // only work in the same block
       if (localIdx2 < blockDim.x && globalIdx2 < length){
