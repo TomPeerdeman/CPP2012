@@ -2,7 +2,7 @@
 \usepackage{caption}
 \usepackage{fancyhdr}
 \usepackage[usenames, dvipsnames]{xcolor}
-\usepackage{graphicx,hyperref,amsmath,float,subfigure,soul}
+\usepackage{graphicx,hyperref,amsmath,float,subfigure,soul,multirow}
 \usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry}
 \hypersetup{
 	colorlinks,
@@ -264,5 +264,103 @@
 	
 
 \section{Assignment 6.2 - Parallel reduction}
-
+  Calculating the maximum from alist of numbers in CUDA is not an easy task.
+  CUDA does not have global communication, therefore results cannot be exchanged between thread blocks.
+  This does not mean that calculating the maximum from a list of numbers is inpossible.
+  If CUDA is used in a tree-based approach, we can work around the communication problem.\\
+  Below are the results of a tree-based CUDA program versus a sequential
+  program to find the maximum in a list of floats.
+  All experiments are done on the same node.
+  \begin{table}[H]
+    \caption{Time needed to calculate the maximum value of a list of floats}
+    \label{table:time}
+    \begin{center}
+	    \begin{tabular}{| c | c | c | c | c | c | c | c | c |}
+	      \hline
+	      List length & Unoptimized or Optimized & \multicolumn{5}{|c|}{Data} & Average\\
+		    \hline
+		    \multirow{2}{*}{10} & CPU & 38.2 ns & 38.3 ns & 38.3 ns & 38.1 ns & 38.3 ns & 38.3 ns\\ 
+		    \cline{2-8}
+		    & GPU & 33.8 $\mu$ s & 33.8 $\mu$ s & 33.7 $\mu$ s & 33.8 $\mu$ s & 33.9 $\mu$ s & 33.8 $\mu$ s\\ 
+		    \hline
+		    \multirow{2}{*}{100} & CPU & 363 ns & 365 ns & 366 ns & 366 ns & 365 ns & 365 ns\\ 
+		    \cline{2-8}
+		    & GPU & 33.4 $\mu$ s & 33.6 $\mu$ s & 34 $\mu$ s & 42.9 $\mu$ s & 40.6 $\mu$ s & 37.3 $\mu$ s\\ 
+		    \hline
+		    \multirow{2}{*}{1000} & CPU & 4.11 $\mu$ & 4.11 $\mu$ & 4.11 $\mu$ & 4.11 $\mu$ & 4.11 $\mu$ & 4.11 $\mu$ \\ 
+		    \cline{2-8}
+		    & GPU & 42.5 $\mu$ s & 34.3 $\mu$ s & 32.6 $\mu$ s & 34.4 $\mu$ s & 43.7 $\mu$ s & 37.5 $\mu$ s\\  
+		    \hline
+		    \multirow{2}{*}{10000} & CPU & 41.6 $\mu$ & 41.7 $\mu$ & 41.5 $\mu$ & 41.6 $\mu$ & 41.6 $\mu$ & 41.6 $\mu$ \\ 
+		    \cline{2-8}
+		    & GPU & 33.6 $\mu$ s & 34.3 $\mu$ s & 39.9 $\mu$ s & 34.4 $\mu$ s & 40.1 $\mu$ s & 36.5 $\mu$ s\\  
+		    \hline
+		    \multirow{2}{*}{100000} & CPU & 428 $\mu$ & 430 $\mu$ & 431 $\mu$ & 428 $\mu$ & 428 $\mu$ & 429 $\mu$ \\ 
+		    \cline{2-8}
+		    & GPU & 35.9 $\mu$ s & 36.4 $\mu$ s & 43.5 $\mu$ s & 36.7 $\mu$ s & 36.6 $\mu$ s & 37.8 $\mu$ s\\  
+		    \hline
+		    \multirow{2}{*}{1000000} & CPU & 4.18 ms & 4.18 ms & 4.16 ms & 4.18 ms & 4.2 ms & 4.18 ms\\ 
+		    \cline{2-8}
+		    & GPU & 40 $\mu$ s & 39.6 $\mu$ s & 39.3 $\mu$ s & 39.3 $\mu$ s & 40.7 $\mu$ s & 39.9 $\mu$ s\\ 
+		    \hline
+	    \end{tabular}
+    \end{center}
+  \end{table}
+  \begin{figure}[H]
+	  \begin{center}
+		  \includegraphics[scale=0.5]{6_2_1.png}
+	  \end{center}
+	  \caption{Comparison between a GPU and a CPU to get the maximum from a list}
+	  \label{fig:6_2_1}
+  \end{figure}
+  No mather how long the list of numbers is, CUDA does not grow a lot.
+  The sequential program however grows linearly.
+  The bigger the list gets, the better CUDA is compared to the sequential program.
+  \subsection{Optimizing code}
+  It is possible to make the CUDA program run even faster.
+  One of the possiblities is to make the list of numbers shared within a thread block.
+  The table of data below shows the time results with this optimization.
+  \begin{table}[H]
+    \caption{Time needed to calculate the maximum value of a list of floats using optimized code}
+    \label{table:time}
+    \begin{center}
+	    \begin{tabular}{| c | c | c | c | c | c | c | c | c |}
+	      \hline
+	      List length & Unoptimized or Optimized & \multicolumn{5}{|c|}{Data} & Average\\
+		    \hline
+		    \multirow{2}{*}{10} & Unoptimized & 33.8 $\mu$ s & 33.8 $\mu$ s & 33.7 $\mu$ s & 33.8 $\mu$ s & 33.9 $\mu$ s & 33.8 $\mu$ s\\ 
+		    \cline{2-8}
+		    & Optimized & 33.1 $\mu$ s & 33.1 $\mu$ s & 33.6 $\mu$ s & 33.3 $\mu$ s & 33.1 $\mu$ s & 33.3 $\mu$ s\\ 
+		    \hline
+		    \multirow{2}{*}{100} & Unoptimized & 33.4 $\mu$ s & 33.6 $\mu$ s & 34 $\mu$ s & 42.9 $\mu$ s & 40.6 $\mu$ s & 37.3 $\mu$ s\\ 
+		    \cline{2-8}
+		    & Optimized & 33.7 $\mu$ s & 33.5 $\mu$ s & 39.6 $\mu$ s & 33.2 $\mu$ s & 34 $\mu$ s & 34.8 $\mu$ s\\ 
+		    \hline
+		    \multirow{2}{*}{1000} & Unoptimized & 42.5 $\mu$ s & 34.3 $\mu$ s & 32.6 $\mu$ s & 34.4 $\mu$ s & 43.7 $\mu$ s & 37.5 $\mu$ s\\  
+		    \cline{2-8}
+		    & Optimized & 39.9 $\mu$ s & 34.3 $\mu$ s & 39.8 $\mu$ s & 33.8 $\mu$ s & 33.8 $\mu$ s & 36.3 $\mu$ s\\  
+		    \hline
+		    \multirow{2}{*}{10000} & Unoptimized & 33.6 $\mu$ s & 34.3 $\mu$ s & 39.9 $\mu$ s & 34.4 $\mu$ s & 40.1 $\mu$ s & 36.5 $\mu$ s\\  
+		    \cline{2-8}
+		    & Optimized & 33.5 $\mu$ s & 34 $\mu$ s & 33.9 $\mu$ s & 33.8 $\mu$ s & 34.2 $\mu$ s & 33.9$\mu$ s\\  
+		    \hline
+		    \multirow{2}{*}{100000} & Unoptimized & 35.9 $\mu$ s & 36.4 $\mu$ s & 43.5 $\mu$ s & 36.7 $\mu$ s & 36.6 $\mu$ s & 37.8 $\mu$ s\\  
+		    \cline{2-8}
+		    & Optimized & 37.3 $\mu$ s & 37.3 $\mu$ s & 36.5 $\mu$ s & 37 $\mu$ s & 37.2 & 37.1 $\mu$ s\\
+		    \hline
+		    \multirow{2}{*}{1000000} & Unoptimized & 40 $\mu$ s & 39.6 $\mu$ s & 39.3 $\mu$ s & 39.3 $\mu$ s & 40.7 $\mu$ s & 39.9 $\mu$ s\\ 
+		    \cline{2-8}
+		    & Optimized & 39.1 $\mu$ s & 39.3 $\mu$ s & 38.7 $\mu$ s & 38.8 $\mu$ s & 37.9 $\mu$ s & 38.8 $\mu$ s\\
+		    \hline
+	    \end{tabular}
+    \end{center}
+  \end{table}
+  \begin{figure}[H]
+	  \begin{center}
+		  \includegraphics[scale=0.5]{6_2_2.png}
+	  \end{center}
+	  \caption{Comparison between unoptimized code and optimized to get the maximum fro a list}
+	  \label{fig:6_2_2}
+  \end{figure}
+  The optimization will not result in that big of a speed up. But any speedup is welcome.
 \end{document}
