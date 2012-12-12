@@ -1,0 +1,31 @@
+\begin{table}[H]
+  \caption{Time needed to calculate the maximum value of a list of floats using optimized code}
+  \label{table:time}
+  \begin{center}
+	  \begin{tabular}{| c | c | c | c | c | c | c | c | c |}
+	    \hline
+	    List length & CPU or GPU & \multicolumn{5}{|c|}{Data} & Average\\
+		  \hline
+		  \multirow{2}{*}{10} & CPU & 38.2 ns & 38.3 ns & 38.3 ns & 38.1 ns & 38.3 ns & 38.3 ns\\ 
+		  \cline{2-8}
+		  & GPU & 33.1 $\mu$ s & 33.1 $\mu$ s & 33.6 $\mu$ s & 33.3 $\mu$ s & 33.1 $\mu$ s & 33.3 $\mu$ s\\ 
+		  \hline
+		  \multirow{2}{*}{100} & CPU & 365 ns & 363 ns & 366 ns & 366 ns & 365 ns & 365 ns\\ 
+		  \cline{2-8}
+		  & GPU & 33.7 $\mu$ s & 33.5 $\mu$ s & 39.6 $\mu$ s & 33.2 $\mu$ s & 34 $\mu$ s & 34.8 $\mu$ s\\ 
+		  \hline
+		  \multirow{2}{*}{1000} & CPU & 4.11 $\mu$ & 4.11 $\mu$ & 4.11 $\mu$ & 4.11 $\mu$ & 4.11 $\mu$ & 4.11 $\mu$ \\ 
+		  \cline{2-8}
+		  & GPU & 39.9 $\mu$ s & 34.3 $\mu$ s & 39.8 $\mu$ s & 33.8 $\mu$ s & 33.8 $\mu$ s & 36.3 $\mu$ s\\  
+		  \hline
+		  \multirow{2}{*}{10000} & CPU & 41.6 $\mu$ & 41.7 $\mu$ & 41.5 $\mu$ & 41.6 $\mu$ & 41.6 $\mu$ & 41.6 $\mu$ \\ 
+		  \cline{2-8}
+		  & GPU & 33.5 $\mu$ s & 34 $\mu$ s & 33.9 $\mu$ s & 33.8 $\mu$ s & 34.2 $\mu$ s & 33.9$\mu$ s\\  
+		  \hline
+		  \multirow{2}{*}{32768} & CPU & 146 $\mu$ & 142 $\mu$ & 137 $\mu$ & 146 $\mu$ & 147 $\mu$ & 144 $\mu$ \\ 
+		  \cline{2-8}
+		  & GPU & 36.2 $\mu$ s & 35.8 $\mu$ s & 35.2 $\mu$ s & 36.1 $\mu$ s & 36 $\mu$ s & 35.9 $\mu$ s\\
+		  \hline
+	  \end{tabular}
+  \end{center}
+\end{table}
