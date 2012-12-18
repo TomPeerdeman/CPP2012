@@ -8,7 +8,7 @@
 		In human networks people tend to remember their gained knowledge from social interactions.
 		The social p2p nodes don't differ in this, the nodes keep an index of topics and the peer nodes that know more about this subject.
 		When a search is conducted for information this index is updated by new entries which contain the nodes that responded to the search.
-		Also the index is updated by removing data that has become invalid.
+		Also the index is updated by removing data that has become invalid.\\
 		The maintaining of this index has the purpose of focusing the future search.
 		If a node searches for a topic that resembles to a topic in its index, it is probably that the associated nodes also know something about this new topic.
 		Also if these nodes don't know anything about this topic, they can probably use their index which is probably filled with topic relevant to the requested topic to find peers that do know anything about it.\\
@@ -29,12 +29,13 @@
 		The problem with this is that the modern day computers don't have infinite data storage, therefore the index is finite.
 		In the social p2p this is solved by using the Least Recently Used (LRU) algorithm.
 		When the index reaches it maximum capacity and more data needs to be added, the algorithm will drop the item that was last used before all other items.\\
-		\\
 		
-		
-		
+	\subsection{Network forming}
+		The connection between peers are build according to the searches.
+		When a peer searches for some topic and it gets a response from another peer, the other peer initiates a connection to exchange the information.
+		This connection is kept open while the peer is alive, the only moment when a connection is closed is when the peer removes the peer from it's local index.
+		The result of this is that a peer is most likely to connect to peers with the same interest as the peer itself.
+		Due to this principle virtual community's are formed with peers that have globally the same area of interest, which we see also in the human behaviour.
 		
 \bibliographystyle{plain}
-\bibliography{social/social}{}
-		
-		
+\bibliography{social/social}{}	
