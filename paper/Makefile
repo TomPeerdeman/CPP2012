@@ -6,16 +6,18 @@ FILE = indexing_paper
 ADDITIONAL = social/social
 
 $(FILE).pdf: $(FILE).bbl
-	$(TEX) $(FILE)
+	$(TEX) $(FILE) > out
+	rm -f out
 	$(TEX) $(FILE)
 
 $(FILE).bbl: $(FILE).bib $(FILE).aux
 	$(BIB) $(FILE).aux
 	
 $(FILE).aux:
-	$(TEX) $(FILE)
+	$(TEX) $(FILE) > out
+	rm -f out
 	
-.PHONY: clean bib pdf
+.PHONY: clean bib pdf cleanbib
 
 clean:
 	rm -f $(FILE).pdf *.aux *.bbl *.blg *.out *.log
@@ -24,5 +26,9 @@ clean:
 bib: $(FILE).bbl
 	
 pdf: $(FILE).bbl
+	$(TEX) $(FILE) > out
+	rm -f out
 	$(TEX) $(FILE)
-	$(TEX) $(FILE)
+	
+cleanbib:
+	rm -f *.bbl *.blg
