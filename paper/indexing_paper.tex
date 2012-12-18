@@ -3,7 +3,6 @@
 \usepackage{fancyhdr}
 \usepackage[usenames, dvipsnames]{xcolor}
 \usepackage{graphicx,hyperref,amsmath,float}
-\usepackage{cite}
 \usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry}
 \hypersetup{
 	colorlinks,
@@ -40,8 +39,10 @@
 	
 	\input{efficient.tex}
 	\input{social.tex}
-
-\bibliography{indexing_paper}{}
-\bibliographystyle{plain}
+	
+	\newpage
+	\nocite{*}
+	\bibliography{indexing_paper}{}
+	\bibliographystyle{plain}
 	
 \end{document}
