@@ -15,8 +15,14 @@ $(FILE).bbl: $(FILE).bib $(FILE).aux
 $(FILE).aux:
 	$(TEX) $(FILE)
 	
-.PHONY: clean
+.PHONY: clean bib pdf
 
 clean:
 	rm -f $(FILE).pdf *.aux *.bbl *.blg *.out *.log
 	rm -f $(ADDITIONAL).tex.aux
+	
+bib: $(FILE).bbl
+	
+pdf: $(FILE).bbl
+	$(TEX) $(FILE)
+	$(TEX) $(FILE)
