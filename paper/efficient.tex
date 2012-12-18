@@ -1,0 +1,38 @@
+	\section{Efficient Event-based Resource Discovery}
+		This specific algorithm makes use of publish/subscribe messages, which need three key elements.
+		Subscribers, or resource discovery clients, who want specific information or resources. Publishers, or 
+		resource providers, who provide specific information or resources. And brokers, or broker networks.
+		Brokers are used for matching subscribers and publishers and serves as a router between them.
+		What makes this resource discovery interesting is that it considers if the resource is static or 
+		dynamic. Besides this consideration it also is necessary to know if resources are used only once or 
+		that they are going to be used continuously. When resources are needed continuously the algorithm 
+		checks if in the time the subscriber is still busy, new resources are found that the subscriber might 
+		need. The system makes use of a so called 'Modeltype'. For resources this Modeltype can have the 
+		value 'Static' or 'Dynamic'. When a Subscribers needs resources he van ask for a Modeltype. The four 
+		possible Modeltypes he can ask for are: 'Static', 'Dynamic', 'Static Continuous', 'Dynamic 
+		Continuous''. Each publisher tells what resource he has to offer. Static resources are denoted with 
+		numerical operators ($<$, $\le$, $>$, $\ge$, $=$), whereas dynamic resource don't have a numerical operator. For 
+		example, a static storage disk with 200GB could look like this: [disk,$\le$,200]. For a dynamic storage 
+		disk this would look like [disk, 200].
+		\subsection{Discovery}
+		There is a difference in resource discovery when the resource is static and when the resource is 
+		dynamic. When the resource added to the network is static, the publisher of this resource floods his 
+		resource description (Modeltype, OS, storage memory etc.) to all the brokers in the network in an 
+		advertisement. The brokers then cache this resource information. When a subscriber wants a specific 
+		resource, all it has to do is send a message to the broker and the broker will reply with the resource 
+		information he got earlier. When the resource is dynamic, the publisher will only send his resource 
+		description to a single broker. The broker will know, because the Modeltype will be 'Dynamic'. When 
+		the resource description is updated, it only has to be changed in the broker. When a dynamic 
+		resource is needed, a message is sent to brokers that match the resources. These brokers are 
+		referred to as 'edge brokers'. These edge brokers return the latest resource description to the 
+		subscriber, as long as the description still matches the conditions set by the subscriber.
+		\subsubsection{Continuous}
+		When the subscribers wants a continuous use of resources, there are slight differences. When the 
+		subscriber wants to continuously use static resources, the broker remembers that the subscriber 
+		issued a 'Static Continuous'' Modeltype request. The resource given to the subscriber will be put in a 
+		table, and will continuously be given to the subscriber. The subscriber therefore does not have to 
+		issue new requests. When a subscriber wants to use dynamic resources continuously, the algorithm 
+		works practically the same as with the non-continuous algorithm. The only difference is that when 
+		the resource changes, this is updated and sent back to the subscriber.
+		When a subscriber does not want to use the resource anymore, he can issue a message telling the 
+		broker that he is done using that resource.

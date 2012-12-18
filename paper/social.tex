@@ -1,0 +1,32 @@
+\section{Social peer-to-peer}
+	In social networks people often know contacts that have knowledge about resources they need.
+	Peer to peer nodes don't have this knowledge about other peers available.
+	This makes resource discovery hard because the peers don't know where to forward their query's to.
+	The social peer-to-peer system tries to solve this by mimicking human behaviour in social networks.\\
+	
+	\subsection{The algorithm}
+		In human networks people tend to remember their gained knowledge from social interactions.
+		The social p2p nodes don't differ in this, the nodes keep an index of topics and the peer nodes that know more about this subject.
+		When a search is conducted for information this index is updated by new entries which contain the nodes that responded to the search.
+		Also the index is updated by removing data that has become invalid.
+		The maintaining of this index has the purpose of focusing the future search.
+		If a node searches for a topic that resembles to a topic in its index, it is probably that the associated nodes also know something about this new topic.
+		Also if these nodes don't know anything about this topic, they can probably use their index which is probably filled with topic relevant to the requested topic to find peers that do know anything about it.\\
+		\\
+		When a node gets receives a query it can co trough 3 phases.
+		The first phase is searching it's local index to peers associated with the exact topic.
+		Here lies the preference in peers by the time it was last updated.
+		However this phase is not very likely to give a lot of peers, the peer then goes into the second phase.\\
+		The second phase also searches the local index, however this time it searches for peers with topics in the interest area of the requested topic.
+		The category's used are given by the Open Directory Categories \cite{opendir}.
+		The preference of the second phase lies in the amount of relevant topics in the category.
+		Also if two peers have the same amount of relevant topics the preference of these topics is determined by their peers response time.
+		The query is then forwarded to the relevant nodes, for each node where the query could be successfully forwarded a counter is increased.
+		When the counter reaches a constant threshold the algorithm is done and terminates.
+		However if the threshold is not reached yet and there are no more relevant nodes in the index the peer goes into the last phase.\\
+		The third phase is simply picking random peers from the index and forwarding the query to them.\\
+		\\
+		The problem with this is that the modern day computers don't have infinite data storage, therefore the index is finite.
+		In the social p2p this is solved by using the Least Recently Used (LRU) algorithm.
+		When the index reaches it maximum capacity and more data needs to be added, the algorithm will drop the item that was last used before all other items.\\
+		\\	

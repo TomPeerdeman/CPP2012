@@ -2,7 +2,8 @@
 \usepackage{caption}
 \usepackage{fancyhdr}
 \usepackage[usenames, dvipsnames]{xcolor}
-\usepackage{graphicx,hyperref,amsmath,float,subfigure,soul,multirow}
+\usepackage{graphicx,hyperref,amsmath,float}
+\usepackage{cite}
 \usepackage[top=3cm,bottom=3cm,left=3cm,right=3cm]{geometry}
 \hypersetup{
 	colorlinks,
@@ -37,5 +38,10 @@
 	\end{center}
 	\end{titlepage}
 	
-	\input{social/social.tex}
+	\input{efficient.tex}
+	\input{social.tex}
+
+\bibliography{indexing_paper}{}
+\bibliographystyle{plain}
+	
 \end{document}
