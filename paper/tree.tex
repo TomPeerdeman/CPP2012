@@ -16,11 +16,11 @@
 
 \subsection{The tree}
   As mentioned, the algorithm makes use of a tree structure.
-  “Each node inside the tree represents a grid site”\cite{}.
+  “Each node inside the tree represents a grid site”\cite{chang2010resource}.
   To make communication simple, each node only has to remember
   the IP addresses of their parent and, if they have any, their children.
-  All the nodes that are not leaves are called “Index Servers” or IS.
-  very IS must know the resource information of their children, using the
+  All the nodes that are not leaves are called “Index Servers” or IS-nodes.
+  Every IS-node must know the resource information of their children, using the
   bitmaps provided by them. Every resource also has a status, free or occupied.
   When a request is made for a resource, the query is sent to a tree node.
   This can be either a IS or a leaf node.  The node looks if it matches the request.
@@ -28,4 +28,33 @@
   to resource information of one of his children nodes, the request is sent down
   the tree towards the child. When finally the resource is found, the resource
   will be reserved. The status then changes to occupied, until the user releases
-  the resource. This is updated in the parent IS.
+  the resource. This is updated in the parent IS-node.
+  
+\subsection{Data structure and Updating} 
+  Each IS has two bitmaps, one local resource and one index bitmap.
+  It also has a counter array, to store the resource information in.
+  Leaf nodes only have a local resource bitmap. The index bitmap stores the
+  resource information of its children. The counter array represents the
+  amount of each resource the IS knows it has in its children. When a
+  resource is occupied, the counter array will update, so that the IS-node
+  knows it cannot use that resource anymore. This is done by lowering
+  the correct counter value with one. When a resource is reclaimed, it
+  has to update all the changed values. When there was a change in disk
+  space for example. The node therefore sends the new information up to
+  its parent node. When any update happens, the parent node is locked,
+  to prevent race conditions. When the node is unlocked, the update is
+  completed. Some attributes change more frequently. Therefore these
+  attributes are given a threshold. If this threshold is not passed,
+  no update will occur.
+  
+\subsection{Failed Nodes}
+  Failed nodes are detected by two measurements. Firstly if the user
+  request is not acknowledged in a specific time period, the node that
+  did not received the acknowledgement considers the node as down.
+  Secondly parent nodes and children nodes send each other messages
+  once in a while, to inform that everything is ok. To make sure that
+  no information is lost if a IS-node is fails, a backup is saved in
+  one of its children. If the backup node fails, a new backup is made.
+  If the IS node fails, the child will inform all the former children
+  of its failure, and will take its place as parent node.
+
