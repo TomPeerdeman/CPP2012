@@ -13,3 +13,19 @@
   The bitmap value for the Qualitative attribute is set to the size of the
   attribute set. Again, a one represents that the resource has this attribute,
   a zero represents that the resource does not have the attribute.
+
+\subsection{The tree}
+  As mentioned, the algorithm makes use of a tree structure.
+  “Each node inside the tree represents a grid site”\cite{}.
+  To make communication simple, each node only has to remember
+  the IP addresses of their parent and, if they have any, their children.
+  All the nodes that are not leaves are called “Index Servers” or IS.
+  very IS must know the resource information of their children, using the
+  bitmaps provided by them. Every resource also has a status, free or occupied.
+  When a request is made for a resource, the query is sent to a tree node.
+  This can be either a IS or a leaf node.  The node looks if it matches the request.
+  If not the message is forwarded to the parent node. If an IS matches a request
+  to resource information of one of his children nodes, the request is sent down
+  the tree towards the child. When finally the resource is found, the resource
+  will be reserved. The status then changes to occupied, until the user releases
+  the resource. This is updated in the parent IS.
