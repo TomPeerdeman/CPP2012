@@ -23,7 +23,7 @@
   Every IS-node must know the resource information of their children, using the
   bitmaps provided by them. Every resource also has a status, free or occupied.
   When a request is made for a resource, the query is sent to a tree node.
-  This can be either a IS or a leaf node.  The node looks if it matches the request.
+  This can be either a IS-node or a leaf node.  The node looks if it matches the request.
   If not the message is forwarded to the parent node. If an IS matches a request
   to resource information of one of his children nodes, the request is sent down
   the tree towards the child. When finally the resource is found, the resource
@@ -31,11 +31,11 @@
   the resource. This is updated in the parent IS-node.
   
 \subsection{Data structure and Updating} 
-  Each IS has two bitmaps, one local resource and one index bitmap.
+  Each IS-node has two bitmaps, one local resource and one index bitmap.
   It also has a counter array, to store the resource information in.
   Leaf nodes only have a local resource bitmap. The index bitmap stores the
   resource information of its children. The counter array represents the
-  amount of each resource the IS knows it has in its children. When a
+  amount of each resource the IS-node knows it has in its children. When a
   resource is occupied, the counter array will update, so that the IS-node
   knows it cannot use that resource anymore. This is done by lowering
   the correct counter value with one. When a resource is reclaimed, it
@@ -48,13 +48,13 @@
   no update will occur.
   
 \subsection{Failed Nodes}
-  Failed nodes are detected by two measurements. Firstly if the user
+  Failed nodes are detected by two measurements. Firstly, if the user
   request is not acknowledged in a specific time period, the node that
   did not received the acknowledgement considers the node as down.
-  Secondly parent nodes and children nodes send each other messages
+  Secondly, parent nodes and children nodes send each other messages
   once in a while, to inform that everything is ok. To make sure that
   no information is lost if a IS-node is fails, a backup is saved in
   one of its children. If the backup node fails, a new backup is made.
-  If the IS node fails, the child will inform all the former children
+  If the IS-node fails, the child will inform all the former children
   of its failure, and will take its place as parent node.
 
