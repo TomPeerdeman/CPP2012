@@ -6,13 +6,17 @@
   Quantitative attributes and Qualitative attributes. Quantitative
   represent attributes like memory size or CPU speed. For all these
   attributes a best fit must be found, so that all users do not interfere
-  with each other’s requests. The bitmap value of the Quantitative attributes
-  is set to the maximumvalue of the range + 2 bits. If the value of one of the
-  bits in the bitmap is zero, then that resource does not have that attribute.
+  with each other’s requests.
   The Qualitative attributes represents information like the Operating System.
-  The bitmap value for the Qualitative attribute is set to the size of the
-  attribute set. Again, a one represents that the resource has this attribute,
-  a zero represents that the resource does not have the attribute.
+  
+\subsection{Bitmap representations}
+  The bitmap representation of the qualitative attributes are rather easy.
+  Each qualitative attribute has a set of possible values.
+  For example the OS attribute can have the set {Linux,Unix, Win-XP, Win-Vista, MacOS}.
+  The bitmap of this attribute will have the length of the set.
+  If a bit is set to 1 in the bitmap this means that the recource has the corresponding
+  attribute value of the attribute set.
+
 
 \subsection{The tree}
   As mentioned, the algorithm makes use of a tree structure.
