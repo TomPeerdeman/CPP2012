@@ -3,34 +3,41 @@
   using a tree structure with bitmaps to represent resource information.
   All the information and attributes of a resource are transformed into
   bitmap representations. The algorithm makes a difference between
-  Quantitative attributes and Qualitative attributes. Quantitative
+  quantitative attributes and qualitative attributes. quantitative
   represent attributes like memory size or CPU speed. For all these
   attributes a best fit must be found, so that all users do not interfere
   with each other’s requests.
-  The Qualitative attributes represents information like the Operating System.
+  The qualitative attributes represents information like the operating system.
   
 \subsection{Bitmap representations}
   The bitmap representation of the qualitative attributes are rather easy.
   Each qualitative attribute has a set of possible values.
-  For example the OS attribute can have the set {Linux,Unix, Win-XP, Win-Vista, MacOS}.
+  For example the OS attribute can have the set \{Linux, Unix, Win-XP, Win-Vista, MacOS\}.
   The bitmap of this attribute will have the length of the set.
-  If a bit is set to 1 in the bitmap this means that the recource has the corresponding
-  attribute value of the attribute set.
-
+  If a bit is set to 1 in the bitmap this means that the resource has the corresponding
+  attribute value of the attribute set.\\
+  \\
+  The quantitative have a similar set, however this set consists only numbers.
+  The set will be like \(\{a_0, a_1, ..., a_x\}\) so that \(a_0 < a_1 < ... < a_x\).
+  If in the bitmap a bit is set to 1 at position k, then this means that there exists a resource with an attribute value V such that \(a_(k-1) < V < a_k\).
+  If a bit is set at position 0 it means that there exists a resource with an attribute value smaller than \(a_0\).
+  Sometimes a resource is requested with an attribute value outside the range of the attribute, to solve this problem another bit is added at the end of the bitmap.
+  If this bit, which we shall call \(x+1\) is set it means that there is a resource with an attribute value larger than \(a_x\).
+  For saving the bits 0 to x we need x + 1 bits, adding the final bit gives a bitmap size of x+2.
 
 \subsection{The tree}
   As mentioned, the algorithm makes use of a tree structure.
-  “Each node inside the tree represents a grid site”\cite{chang2010resource}.
+  ''Each node inside the tree represents a grid site'' \cite{chang2010resource}.
   To make communication simple, each node only has to remember
   the IP addresses of their parent and, if they have any, their children.
-  All the nodes that are not leaves are called “Index Servers” or IS-nodes.
+  All the nodes that are not leaves are called ''Index Servers'' or IS-nodes.
   Every IS-node must know the resource information of their children, using the
   bitmaps provided by them. Every resource also has a status, free or occupied.
   When a request is made for a resource, the query is sent to a tree node.
   This can be either a IS-node or a leaf node.  The node looks if it matches the request.
   If not the message is forwarded to the parent node. If an IS matches a request
   to resource information of one of his children nodes, the request is sent down
-  the tree towards the child. When finally the resource is found, the resource
+  the tree toward the child. When finally the resource is found, the resource
   will be reserved. The status then changes to occupied, until the user releases
   the resource. This is updated in the parent IS-node.
   
