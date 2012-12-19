@@ -11,13 +11,13 @@
   
 \subsection{Bitmap representations}
   The bitmap representation of the qualitative attributes are rather easy.
-  Each Qualitative attribute has a set of possible values.
+  Each qualitative attribute has a set of possible values.
   For example the OS attribute can have the set \{Linux, Unix, Win-XP, Win-Vista, MacOS\}.
   The bitmap of this attribute will have the length of the set.
   If a bit is set to 1 in the bitmap this means that the resource has the corresponding
   attribute value of the attribute set.\\
   \\
-  The Quantitative have a similar set, however this set consists only numbers.
+  The quantitative have a similar set, however this set consists only numbers.
   The set will look like \(\{a_0, a_1, ..., a_x\}\) so that \(a_0 < a_1 < ... < a_x\).
   If in the bitmap a bit is set to 1 at position k, then this means that there exists a resource with an attribute value V such that \(a_(k-1) < V < a_k\).
   If a bit is set at position 0 it means that there exists a resource with an attribute value smaller than \(a_0\).
